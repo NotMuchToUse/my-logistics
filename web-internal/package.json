@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
+    "test": "node --test src/features/pricing-catalog/tests/pricing-catalog-mock.test.mjs src/features/pricing-catalog/tests/pricing-catalog-api-mock.test.mjs src/features/pricing-catalog/tests/pricing-catalog-hook-state.test.mjs src/features/pricing-catalog/tests/pricing-catalog-components.test.mjs src/features/pricing-catalog/tests/pricing-catalog-page.test.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
