@@ -1,0 +1,47 @@
+{
+  "success_response": {
+    "success": true,
+    "message": "Ước tính cước phí thành công",
+    "data": {
+      "origin_branch_id": 1,
+      "destination_branch_id": 2,
+      "service_type_id": 1,
+      "chargeable_weight_gram": 1000,
+      "total_freight_amount": 35000
+    },
+    "meta": {
+      "timestamp": "2026-11-23T09:35:00+07:00"
+    }
+  },
+  "pagination_response": {
+    "success": true,
+    "message": "Lấy danh sách dịch vụ thành công",
+    "data": [
+      {
+        "service_type_id": 1
+      }
+    ],
+    "meta": {
+      "pagination": {
+        "page": 1,
+        "per_page": 20,
+        "total": 1,
+        "total_pages": 1
+      },
+      "timestamp": "2026-11-23T09:35:00+07:00"
+    }
+  },
+  "error_response": {
+    "success": false,
+    "error": {
+      "code": "422_VALIDATION_ERROR",
+      "message": "Dữ liệu ước tính không hợp lệ",
+      "details": {
+        "chargeable_weight_gram": [
+          "Trọng lượng tính cước phải lớn hơn 0"
+        ]
+      },
+      "trace_id": "ERR-20261123-RATE001"
+    }
+  }
+}

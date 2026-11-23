@@ -1,0 +1,50 @@
+{
+  "success_response": {
+    "success": true,
+    "message": "Lấy chi tiết vận đơn thành công",
+    "data": {
+      "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6V8",
+      "tracking_code": "VS26112300001",
+      "status": "pending_pickup",
+      "total_freight_amount": 35000,
+      "cod_amount": 250000,
+      "version": 1,
+      "created_at": "2026-11-23 09:30:00"
+    },
+    "meta": {
+      "timestamp": "2026-11-23T09:35:00+07:00"
+    }
+  },
+  "pagination_response": {
+    "success": true,
+    "message": "Lấy lịch sử vận đơn thành công",
+    "data": [
+      {
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6V8",
+        "tracking_code": "VS26112300001",
+        "status": "pending_pickup",
+        "total_freight_amount": 35000,
+        "cod_amount": 250000,
+        "version": 1,
+        "created_at": "2026-11-23 09:30:00"
+      }
+    ],
+    "meta": {
+      "pagination": {
+        "page": 1,
+        "per_page": 20,
+        "total": 1,
+        "total_pages": 1
+      },
+      "timestamp": "2026-11-23T09:35:00+07:00"
+    }
+  },
+  "error_response": {
+    "success": false,
+    "error": {
+      "code": "404_NOT_FOUND",
+      "message": "Không tìm thấy vận đơn của khách hàng",
+      "trace_id": "ERR-20261123-SHP001"
+    }
+  }
+}

@@ -34,12 +34,13 @@
 
 ---
 
-## 3. Bảng Theo dõi Tiến độ 15 Task Server API (`KHA-5` – `KHA-55`)
+## 3. Bảng Theo dõi Tiến độ 16 Task Server API (`KHA-02`, `KHA-5` – `KHA-55`)
 
 _(Đã đối chiếu khớp 100% với mã Issue thực tế trên Linear Workspace `KhangDev` Team `KHA`. Tổng trọng số phần Server API = **156 điểm**.)_
 
 | Mã KHA   | Tên Task (`server-php/`)                                                             | Người nhận | Timebox (giờ) | Ngày thực hiện | Trạng thái |  % Đóng góp  | Checkpoint bàn giao dở dang nếu quá giờ                                                                                                       |
 | :------- | :----------------------------------------------------------------------------------- | :--------- | :-----------: | :------------: | :--------- | :----------: | :-------------------------------------------------------------------------------------------------------------------------------------------- |
+| `KHA-02` | Khởi tạo khung PHP 8.x PSR-4, Core, Middleware & kiểm tra kết nối MySQL                | `Khang`    |       —       |   23/11/2026   | `Done`     | `100%`        | Composer PSR-4, Core, middleware, 10 module và `php -l` hoàn tất; `scripts/test_db.php` kết nối thành công, xác nhận MariaDB 10.6.24 với 55 bảng. |
 | `KHA-5`  | Triển khai MySQL 8.0, 3 user phân quyền & Seed dữ liệu mẫu Vietstar                  | `Khang`    |      2h       |   23/11/2026   | `Todo`     | `0%` _(10đ)_ | Xuất file `.sql` đã dump kèm danh sách tài khoản test vào `docs/SEED_CREDENTIALS.md`.                                                         |
 | `KHA-6`  | Dựng khung PHP 8.x OOP PSR-4, PDO Security, API_CONTRACT.md & Mẫu CRUD               | `Khang`    |      3h       |   23/11/2026   | `Todo`     | `0%` _(10đ)_ | Push khung `src/Core` + `.env.example` + `API_CONTRACT.md` + endpoint mẫu `cargo_categories` chạy thông trên Postman.                         |
 | `KHA-8`  | Xây dựng Auth Đăng nhập/Đăng ký, Token Hash, Brute-force & Consent NĐ13              | `Khang`    |      3h       |   23/11/2026   | `Todo`     | `0%` _(10đ)_ | Hoàn thành tối thiểu `login` và `register` trả về Bearer token hợp lệ và lưu `personal_access_tokens`.                                        |

@@ -1,0 +1,47 @@
+{
+  "success_response": {
+    "success": true,
+    "message": "Lấy giao dịch COD thành công",
+    "data": {
+      "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6W5",
+      "shipment_id": 1,
+      "driver_id": 201,
+      "branch_id": 1,
+      "status": "driver_holding",
+      "version": 2
+    },
+    "meta": {
+      "timestamp": "2026-11-23T09:35:00+07:00"
+    }
+  },
+  "pagination_response": {
+    "success": true,
+    "message": "Lấy danh sách bảng kê thu tiền thành công",
+    "data": [
+      {
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6W6",
+        "branch_id": 1,
+        "driver_id": 201,
+        "status": "locked",
+        "version": 1
+      }
+    ],
+    "meta": {
+      "pagination": {
+        "page": 1,
+        "per_page": 20,
+        "total": 1,
+        "total_pages": 1
+      },
+      "timestamp": "2026-11-23T09:35:00+07:00"
+    }
+  },
+  "error_response": {
+    "success": false,
+    "error": {
+      "code": "409_IDEMPOTENCY_DUPLICATE",
+      "message": "Thao tác đã được tiếp nhận trước đó",
+      "trace_id": "ERR-20261123-FIN001"
+    }
+  }
+}

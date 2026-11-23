@@ -1,0 +1,51 @@
+{
+  "success_response": {
+    "success": true,
+    "message": "Lấy yêu cầu lấy hàng thành công",
+    "data": {
+      "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6W2",
+      "customer_id": 101,
+      "branch_id": 1,
+      "assigned_driver_id": 201,
+      "sender_phone_masked": "090***6789",
+      "status": "assigned",
+      "version": 2
+    },
+    "meta": {
+      "timestamp": "2026-11-23T09:35:00+07:00"
+    }
+  },
+  "pagination_response": {
+    "success": true,
+    "message": "Lấy danh sách yêu cầu lấy hàng thành công",
+    "data": [
+      {
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6W2",
+        "branch_id": 1,
+        "assigned_driver_id": 201,
+        "status": "assigned",
+        "version": 2
+      }
+    ],
+    "meta": {
+      "pagination": {
+        "page": 1,
+        "per_page": 20,
+        "total": 1,
+        "total_pages": 1
+      },
+      "timestamp": "2026-11-23T09:35:00+07:00"
+    }
+  },
+  "error_response": {
+    "success": false,
+    "error": {
+      "code": "422_VALIDATION_ERROR",
+      "message": "Yêu cầu lấy hàng không hợp lệ",
+      "details": {
+        "sender_phone": ["Số điện thoại người gửi không hợp lệ"]
+      },
+      "trace_id": "ERR-20261123-PCK001"
+    }
+  }
+}
