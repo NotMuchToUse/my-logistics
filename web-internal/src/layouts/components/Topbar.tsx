@@ -1,8 +1,11 @@
-import { LogOut, Menu, PackageCheck } from "lucide-react";
+import { LoaderCircle, LogOut, Menu, PackageCheck } from "lucide-react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/core/stores/useAuthStore";
+import { logoutApi } from "@/features/auth/api/auth.api";
 import { BranchSwitcher } from "@/layouts/components/BranchSwitcher";
+import { toast } from "sonner";
 
 export interface TopbarProps {
   onOpenSidebar: () => void;
@@ -13,10 +16,20 @@ export function Topbar({ onOpenSidebar }: TopbarProps) {
   const roles = useAuthStore((state) => state.roles);
   const logout = useAuthStore((state) => state.logout);
   const navigate = useNavigate();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  function handleLogout(): void {
-    logout();
-    navigate("/login", { replace: true });
+  async function handleLogout(): Promise<void> {
+    setIsLoggingOut(true);
+
+    try {
+      await logoutApi();
+      logout();
+      navigate("/login", { replace: true });
+    } catch {
+      toast.error("Không thể đăng xuất an toàn. Vui lòng thử lại.");
+    } finally {
+      setIsLoggingOut(false);
+    }
   }
 
   return (
@@ -48,7 +61,7 @@ export function Topbar({ onOpenSidebar }: TopbarProps) {
         <div className="flex shrink-0 items-center gap-2">
           <div className="hidden min-w-0 text-right xl:block">
             <p className="max-w-40 truncate text-sm font-medium">
-              {user?.public_id ?? "Tài khoản"}
+              {user?.full_name ?? "Tài khoản"}
             </p>
             <p className="max-w-40 truncate text-xs text-muted-foreground">
               {roles[0] ?? "Chưa xác định vai trò"}
@@ -58,11 +71,21 @@ export function Topbar({ onOpenSidebar }: TopbarProps) {
             type="button"
             variant="ghost"
             size="sm"
+            disabled={isLoggingOut}
             onClick={handleLogout}
             aria-label="Đăng xuất"
           >
-            <LogOut className="h-4 w-4" aria-hidden="true" />
-            <span className="hidden sm:inline">Đăng xuất</span>
+            {isLoggingOut ? (
+              <LoaderCircle
+                className="h-4 w-4 animate-spin"
+                aria-hidden="true"
+              />
+            ) : (
+              <LogOut className="h-4 w-4" aria-hidden="true" />
+            )}
+            <span className="hidden sm:inline">
+              {isLoggingOut ? "Đang đăng xuất" : "Đăng xuất"}
+            </span>
           </Button>
         </div>
       </div>
