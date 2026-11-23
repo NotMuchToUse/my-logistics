@@ -2,6 +2,14 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { UserBranchScope } from "@/types/rbac.types";
 
+function getScopeKey(scope: UserBranchScope): string {
+  return [
+    scope.scope_type,
+    scope.branch_id ?? "none",
+    scope.warehouse_id ?? "none",
+  ].join(":");
+}
+
 export interface BranchScopeState {
   scopes: UserBranchScope[];
   activeScope: UserBranchScope | null;
@@ -20,7 +28,11 @@ export const useBranchScopeStore = create<BranchScopeState>()(
       setScopes: (scopes) => {
         const currentScope = get().activeScope;
         const activeScope =
-          scopes.find((scope) => scope.id === currentScope?.id) ??
+          (currentScope
+            ? scopes.find(
+                (scope) => getScopeKey(scope) === getScopeKey(currentScope),
+              )
+            : undefined) ??
           scopes.find((scope) => scope.branch_id !== null) ??
           scopes[0] ??
           null;

@@ -3,11 +3,36 @@
     "success": true,
     "message": "Ước tính cước phí thành công",
     "data": {
-      "origin_branch_id": 1,
-      "destination_branch_id": 2,
-      "service_type_id": 1,
-      "chargeable_weight_gram": 1000,
-      "total_freight_amount": 35000
+      "origin_branch_id": 3,
+      "destination_branch_id": 5,
+      "service_type_id": 2,
+      "cargo_category_id": 2,
+      "chargeable_weight_gram": 1500,
+      "declared_value": 1000000,
+      "cod_amount": 250000,
+      "base_freight_amount": 34000,
+      "surcharge_amount": 10000,
+      "vas_amount": 5000,
+      "vat_amount": 0,
+      "total_freight_amount": 49000,
+      "value_added_services": [
+        {
+          "id": 1,
+          "code": "DECLARED_VALUE_INSURANCE",
+          "name": "Bảo hiểm khai giá",
+          "fee_type": "percentage",
+          "fee_value": 0.5
+        }
+      ],
+      "surcharges": [
+        {
+          "id": 3,
+          "code": "FUEL",
+          "name": "Phụ phí nhiên liệu",
+          "fee_type": "percentage",
+          "fee_value": 5
+        }
+      ]
     },
     "meta": {
       "timestamp": "2026-11-23T09:35:00+07:00"
@@ -18,14 +43,32 @@
     "message": "Lấy danh sách dịch vụ thành công",
     "data": [
       {
-        "service_type_id": 1
+        "id": 1,
+        "code": "EXPRESS",
+        "name": "Hỏa tốc",
+        "estimated_days_min": 1,
+        "estimated_days_max": 1
+      },
+      {
+        "id": 2,
+        "code": "STANDARD",
+        "name": "Nhanh",
+        "estimated_days_min": 1,
+        "estimated_days_max": 2
+      },
+      {
+        "id": 3,
+        "code": "ECONOMY",
+        "name": "Tiết kiệm",
+        "estimated_days_min": 2,
+        "estimated_days_max": 4
       }
     ],
     "meta": {
       "pagination": {
         "page": 1,
         "per_page": 20,
-        "total": 1,
+        "total": 3,
         "total_pages": 1
       },
       "timestamp": "2026-11-23T09:35:00+07:00"

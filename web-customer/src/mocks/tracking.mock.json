@@ -3,13 +3,51 @@
     "success": true,
     "message": "Tra cứu vận đơn thành công",
     "data": {
-      "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6V8",
-      "tracking_code": "VS26112300001",
+      "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6Z3",
+      "tracking_code": "VS26112300004",
       "status": "in_transit",
-      "total_freight_amount": 35000,
-      "cod_amount": 250000,
-      "version": 3,
-      "created_at": "2026-11-23 09:30:00"
+      "sender_name": "Lê Quốc Bảo",
+      "sender_phone_masked": "090***6789",
+      "recipient_name": "Trần Ngọc Mai",
+      "recipient_phone_masked": "091***2468",
+      "origin_branch_id": 3,
+      "destination_branch_id": 5,
+      "service_type_id": 2,
+      "parcel_count": 1,
+      "chargeable_weight_gram": 2100,
+      "total_freight_amount": 39000,
+      "cod_amount": 125000,
+      "version": 5,
+      "created_at": "2026-11-22 18:40:00",
+      "shipment_parcels": [
+        {
+          "parcel_index": 1,
+          "parcel_barcode": "VS26112300004-01",
+          "length_cm": 28,
+          "width_cm": 20,
+          "height_cm": 15,
+          "actual_weight_gram": 2100,
+          "volumetric_weight_gram": 1680,
+          "chargeable_weight_gram": 2100,
+          "description": "Hồ sơ doanh nghiệp"
+        }
+      ],
+      "shipment_status_history": [
+        {
+          "from_status": "in_warehouse",
+          "to_status": "bagged",
+          "description": "Đã đóng túi seal chờ trung chuyển.",
+          "is_public_visible": 1,
+          "occurred_at": "2026-11-22 22:30:00"
+        },
+        {
+          "from_status": "bagged",
+          "to_status": "in_transit",
+          "description": "Đang vận chuyển từ Đà Nẵng đến Hà Nội.",
+          "is_public_visible": 1,
+          "occurred_at": "2026-11-23 00:20:00"
+        }
+      ]
     },
     "meta": {
       "timestamp": "2026-11-23T09:35:00+07:00"
@@ -17,20 +55,38 @@
   },
   "pagination_response": {
     "success": true,
-    "message": "Lấy danh sách vận đơn thành công",
+    "message": "Lấy danh sách vận đơn tra cứu thành công",
     "data": [
       {
-        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6V8",
-        "tracking_code": "VS26112300001",
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6Z3",
+        "tracking_code": "VS26112300004",
         "status": "in_transit",
-        "version": 3
+        "total_freight_amount": 39000,
+        "cod_amount": 125000,
+        "version": 5
+      },
+      {
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6Z5",
+        "tracking_code": "VS26112300006",
+        "status": "delivered",
+        "total_freight_amount": 35000,
+        "cod_amount": 0,
+        "version": 7
+      },
+      {
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6Z7",
+        "tracking_code": "VS26112300008",
+        "status": "pending_return",
+        "total_freight_amount": 61000,
+        "cod_amount": 1200000,
+        "version": 5
       }
     ],
     "meta": {
       "pagination": {
         "page": 1,
         "per_page": 20,
-        "total": 1,
+        "total": 3,
         "total_pages": 1
       },
       "timestamp": "2026-11-23T09:35:00+07:00"
@@ -41,6 +97,7 @@
     "error": {
       "code": "404_NOT_FOUND",
       "message": "Không tìm thấy vận đơn",
+      "details": {},
       "trace_id": "ERR-20261123-TRK001"
     }
   }

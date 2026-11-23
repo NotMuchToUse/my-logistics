@@ -3,13 +3,42 @@
     "success": true,
     "message": "Đăng nhập thành công",
     "data": {
-      "token": "mock-internal-access-token",
+      "access_token": "mock-internal-access-token",
+      "token_type": "Bearer",
+      "expires_at": "2026-11-24T09:30:00+07:00",
       "user": {
         "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6V8",
+        "full_name": "Nguyễn Minh An",
+        "email": "reception@vietstar.test",
+        "employee_code": "VST0001",
+        "phone_masked": "090***6789",
+        "user_type": "staff",
         "must_change_password": 0
       },
-      "roles": ["receptionist"],
-      "permissions": []
+      "roles": [
+        "receptionist"
+      ],
+      "permissions": [],
+      "branch_scopes": [
+        {
+          "scope_type": "branch",
+          "branch_id": 3,
+          "warehouse_id": null,
+          "is_primary": true,
+          "branch_public_id": "01JDC9X8K2M4N6P8Q0R2S4T6W2",
+          "branch_code": "VS-DNG",
+          "branch_name": "Chi nhánh Đà Nẵng"
+        },
+        {
+          "scope_type": "post_office",
+          "branch_id": 4,
+          "warehouse_id": null,
+          "is_primary": false,
+          "branch_public_id": "01JDC9X8K2M4N6P8Q0R2S4T6W3",
+          "branch_code": "VS-DNG-SONTRA",
+          "branch_name": "Bưu cục Sơn Trà"
+        }
+      ]
     },
     "meta": {
       "timestamp": "2026-11-23T09:30:00+07:00"
@@ -21,6 +50,10 @@
     "data": [
       {
         "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6V8",
+        "full_name": "Nguyễn Minh An",
+        "email": "reception@vietstar.test",
+        "employee_code": "VST0001",
+        "user_type": "staff",
         "must_change_password": 0
       }
     ],
@@ -38,7 +71,8 @@
     "success": false,
     "error": {
       "code": "401_UNAUTHORIZED",
-      "message": "Thông tin xác thực không hợp lệ",
+      "message": "Thông tin đăng nhập không chính xác.",
+      "details": {},
       "trace_id": "ERR-20261123-AUTH001"
     }
   }

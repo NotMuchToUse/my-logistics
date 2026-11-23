@@ -21,14 +21,26 @@ export type ScopeType =
   | "warehouse";
 
 export interface UserBranchScope {
-  id: number;
-  user_id: number;
   branch_id: number | null;
   warehouse_id: number | null;
   scope_type: ScopeType;
+  is_primary?: boolean;
+  branch_public_id?: string | null;
+  branch_code?: string | null;
+  branch_name?: string | null;
+  warehouse_public_id?: string | null;
+  warehouse_code?: string | null;
+  warehouse_name?: string | null;
+  id?: number;
+  user_id?: number;
 }
 
 export interface InternalUser {
   public_id: string;
-  must_change_password: 0 | 1;
+  must_change_password: boolean | 0 | 1;
+  full_name?: string;
+  email?: string;
+  employee_code?: string | null;
+  user_type?: "staff" | "customer" | "system_dev";
+  phone_masked?: string;
 }

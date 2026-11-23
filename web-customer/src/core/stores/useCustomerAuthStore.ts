@@ -3,15 +3,26 @@ import { persist } from "zustand/middleware";
 
 export interface CustomerAuthUser {
   public_id: string;
+  full_name?: string;
+  email?: string;
+  user_type?: "customer";
+  must_change_password?: boolean | 0 | 1;
 }
 
 export interface CustomerProfile {
   public_id: string;
+  customer_code?: string;
+  customer_type?: "individual" | "corporate_postpaid";
+  company_name?: string | null;
+  tax_code?: string | null;
+  full_name?: string;
+  phone_masked?: string;
+  email?: string | null;
 }
 
 export interface CustomerLoginPayload {
   user: CustomerAuthUser;
-  customer: CustomerProfile;
+  customer: CustomerProfile | null;
   token: string;
 }
 

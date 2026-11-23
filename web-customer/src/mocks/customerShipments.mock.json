@@ -3,13 +3,64 @@
     "success": true,
     "message": "Lấy chi tiết vận đơn thành công",
     "data": {
-      "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6V8",
+      "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6Z0",
       "tracking_code": "VS26112300001",
-      "status": "pending_pickup",
-      "total_freight_amount": 35000,
+      "shipment_type": "normal",
+      "pickup_request_id": 701,
+      "customer_id": 101,
+      "origin_branch_id": 3,
+      "destination_branch_id": 5,
+      "service_type_id": 2,
+      "cargo_category_id": 2,
+      "sender_name": "Lê Quốc Bảo",
+      "sender_phone_masked": "090***6789",
+      "sender_province_id": 48,
+      "sender_district_id": 490,
+      "sender_ward_id": 20194,
+      "sender_address": "35 Lê Duẩn, Hải Châu, Đà Nẵng",
+      "recipient_name": "Trần Ngọc Mai",
+      "recipient_phone_masked": "091***2468",
+      "recipient_province_id": 1,
+      "recipient_district_id": 1,
+      "recipient_ward_id": 1,
+      "recipient_address": "28 Trần Hưng Đạo, Ba Đình, Hà Nội",
+      "parcel_count": 1,
+      "total_actual_weight_gram": 1200,
+      "total_volumetric_weight_gram": 1500,
+      "chargeable_weight_gram": 1500,
+      "declared_value": 1000000,
+      "payment_method": "ngttn",
+      "base_freight_amount": 34000,
+      "surcharge_amount": 10000,
+      "vas_amount": 5000,
+      "vat_amount": 0,
+      "total_freight_amount": 49000,
       "cod_amount": 250000,
+      "status": "pending_pickup",
       "version": 1,
-      "created_at": "2026-11-23 09:30:00"
+      "created_at": "2026-11-23 08:30:00",
+      "shipment_parcels": [
+        {
+          "parcel_index": 1,
+          "parcel_barcode": "VS26112300001-01",
+          "length_cm": 30,
+          "width_cm": 20,
+          "height_cm": 12,
+          "actual_weight_gram": 1200,
+          "volumetric_weight_gram": 1500,
+          "chargeable_weight_gram": 1500,
+          "description": "Hộp hàng dễ vỡ"
+        }
+      ],
+      "shipment_status_history": [
+        {
+          "from_status": null,
+          "to_status": "pending_pickup",
+          "description": "Đã tạo vận đơn, chờ lấy hàng.",
+          "is_public_visible": 1,
+          "occurred_at": "2026-11-23 08:30:00"
+        }
+      ]
     },
     "meta": {
       "timestamp": "2026-11-23T09:35:00+07:00"
@@ -20,20 +71,333 @@
     "message": "Lấy lịch sử vận đơn thành công",
     "data": [
       {
-        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6V8",
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6Z0",
         "tracking_code": "VS26112300001",
         "status": "pending_pickup",
-        "total_freight_amount": 35000,
+        "origin_branch_id": 3,
+        "destination_branch_id": 5,
+        "parcel_count": 1,
+        "chargeable_weight_gram": 1500,
+        "base_freight_amount": 34000,
+        "surcharge_amount": 10000,
+        "vas_amount": 5000,
+        "total_freight_amount": 49000,
         "cod_amount": 250000,
         "version": 1,
-        "created_at": "2026-11-23 09:30:00"
+        "created_at": "2026-11-23 08:30:00",
+        "shipment_parcels": [
+          {
+            "parcel_index": 1,
+            "parcel_barcode": "VS26112300001-01",
+            "length_cm": 30,
+            "width_cm": 20,
+            "height_cm": 12,
+            "actual_weight_gram": 1200,
+            "volumetric_weight_gram": 1500,
+            "chargeable_weight_gram": 1500,
+            "description": "Hộp hàng dễ vỡ"
+          }
+        ],
+        "shipment_status_history": [
+          {
+            "from_status": null,
+            "to_status": "pending_pickup",
+            "description": "Đã tạo vận đơn, chờ lấy hàng.",
+            "is_public_visible": 1,
+            "occurred_at": "2026-11-23 08:30:00"
+          }
+        ]
+      },
+      {
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6Z1",
+        "tracking_code": "VS26112300002",
+        "status": "in_warehouse",
+        "origin_branch_id": 3,
+        "destination_branch_id": 4,
+        "parcel_count": 1,
+        "chargeable_weight_gram": 800,
+        "base_freight_amount": 35000,
+        "total_freight_amount": 35000,
+        "cod_amount": 0,
+        "version": 3,
+        "created_at": "2026-11-23 07:45:00",
+        "shipment_parcels": [
+          {
+            "parcel_index": 1,
+            "parcel_barcode": "VS26112300002-01",
+            "length_cm": 22,
+            "width_cm": 16,
+            "height_cm": 8,
+            "actual_weight_gram": 800,
+            "volumetric_weight_gram": 470,
+            "chargeable_weight_gram": 800,
+            "description": "Tài liệu"
+          }
+        ],
+        "shipment_status_history": [
+          {
+            "from_status": "pending_pickup",
+            "to_status": "picked_up",
+            "description": "Tài xế đã nhận hàng.",
+            "is_public_visible": 1,
+            "occurred_at": "2026-11-23 08:20:00"
+          },
+          {
+            "from_status": "picked_up",
+            "to_status": "in_warehouse",
+            "description": "Hàng đã nhập kho Đà Nẵng.",
+            "is_public_visible": 1,
+            "occurred_at": "2026-11-23 09:10:00"
+          }
+        ]
+      },
+      {
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6Z2",
+        "tracking_code": "VS26112300003",
+        "status": "bagged",
+        "origin_branch_id": 3,
+        "destination_branch_id": 5,
+        "parcel_count": 2,
+        "chargeable_weight_gram": 3200,
+        "base_freight_amount": 42000,
+        "surcharge_amount": 5000,
+        "vas_amount": 10000,
+        "total_freight_amount": 57000,
+        "cod_amount": 500000,
+        "version": 4,
+        "created_at": "2026-11-23 07:20:00",
+        "shipment_parcels": [
+          {
+            "parcel_index": 1,
+            "parcel_barcode": "VS26112300003-01",
+            "length_cm": 24,
+            "width_cm": 18,
+            "height_cm": 12,
+            "actual_weight_gram": 1600,
+            "volumetric_weight_gram": 864,
+            "chargeable_weight_gram": 1600,
+            "description": "Thiết bị điện tử"
+          },
+          {
+            "parcel_index": 2,
+            "parcel_barcode": "VS26112300003-02",
+            "length_cm": 24,
+            "width_cm": 18,
+            "height_cm": 12,
+            "actual_weight_gram": 1500,
+            "volumetric_weight_gram": 864,
+            "chargeable_weight_gram": 1600,
+            "description": "Phụ kiện điện tử"
+          }
+        ],
+        "shipment_status_history": [
+          {
+            "from_status": "in_warehouse",
+            "to_status": "bagged",
+            "description": "Đã đóng túi seal đi Hà Nội.",
+            "is_public_visible": 1,
+            "occurred_at": "2026-11-23 09:15:00"
+          }
+        ]
+      },
+      {
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6Z3",
+        "tracking_code": "VS26112300004",
+        "status": "in_transit",
+        "origin_branch_id": 3,
+        "destination_branch_id": 5,
+        "parcel_count": 1,
+        "chargeable_weight_gram": 2100,
+        "base_freight_amount": 34000,
+        "vas_amount": 5000,
+        "total_freight_amount": 39000,
+        "cod_amount": 125000,
+        "version": 5,
+        "created_at": "2026-11-22 18:40:00",
+        "shipment_parcels": [
+          {
+            "parcel_index": 1,
+            "parcel_barcode": "VS26112300004-01",
+            "length_cm": 28,
+            "width_cm": 20,
+            "height_cm": 15,
+            "actual_weight_gram": 2100,
+            "volumetric_weight_gram": 1680,
+            "chargeable_weight_gram": 2100,
+            "description": "Hồ sơ doanh nghiệp"
+          }
+        ],
+        "shipment_status_history": [
+          {
+            "from_status": "bagged",
+            "to_status": "in_transit",
+            "description": "Rời kho Đà Nẵng đi Hà Nội.",
+            "is_public_visible": 1,
+            "occurred_at": "2026-11-23 00:20:00"
+          }
+        ]
+      },
+      {
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6Z4",
+        "tracking_code": "VS26112300005",
+        "status": "out_for_delivery",
+        "origin_branch_id": 3,
+        "destination_branch_id": 5,
+        "assigned_driver_id": 203,
+        "parcel_count": 1,
+        "chargeable_weight_gram": 2880,
+        "base_freight_amount": 45000,
+        "vas_amount": 10000,
+        "total_freight_amount": 55000,
+        "cod_amount": 750000,
+        "version": 6,
+        "created_at": "2026-11-22 15:10:00",
+        "shipment_parcels": [
+          {
+            "parcel_index": 1,
+            "parcel_barcode": "VS26112300005-01",
+            "length_cm": 32,
+            "width_cm": 24,
+            "height_cm": 18,
+            "actual_weight_gram": 1500,
+            "volumetric_weight_gram": 2880,
+            "chargeable_weight_gram": 2880,
+            "description": "Đồ gốm dễ vỡ"
+          }
+        ],
+        "shipment_status_history": [
+          {
+            "from_status": "in_warehouse",
+            "to_status": "out_for_delivery",
+            "description": "Đã xuất kho cho tài xế giao chặng cuối.",
+            "is_public_visible": 1,
+            "occurred_at": "2026-11-23 08:00:00"
+          }
+        ]
+      },
+      {
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6Z5",
+        "tracking_code": "VS26112300006",
+        "status": "delivered",
+        "origin_branch_id": 5,
+        "destination_branch_id": 3,
+        "parcel_count": 1,
+        "chargeable_weight_gram": 950,
+        "base_freight_amount": 30000,
+        "vas_amount": 5000,
+        "total_freight_amount": 35000,
+        "cod_amount": 0,
+        "delivered_at": "2026-11-23 08:55:00",
+        "version": 7,
+        "created_at": "2026-11-21 10:00:00",
+        "shipment_parcels": [
+          {
+            "parcel_index": 1,
+            "parcel_barcode": "VS26112300006-01",
+            "length_cm": 20,
+            "width_cm": 15,
+            "height_cm": 10,
+            "actual_weight_gram": 950,
+            "volumetric_weight_gram": 500,
+            "chargeable_weight_gram": 950,
+            "description": "Tài liệu văn phòng"
+          }
+        ],
+        "shipment_status_history": [
+          {
+            "from_status": "out_for_delivery",
+            "to_status": "delivered",
+            "description": "Đã giao hàng thành công.",
+            "is_public_visible": 1,
+            "occurred_at": "2026-11-23 08:55:00"
+          }
+        ]
+      },
+      {
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6Z6",
+        "tracking_code": "VS26112300007",
+        "status": "delivery_failed",
+        "origin_branch_id": 3,
+        "destination_branch_id": 5,
+        "assigned_driver_id": 204,
+        "parcel_count": 1,
+        "chargeable_weight_gram": 2500,
+        "base_freight_amount": 25000,
+        "surcharge_amount": 15000,
+        "total_freight_amount": 40000,
+        "cod_amount": 180000,
+        "delivery_attempt_count": 1,
+        "note": "Khách hẹn giao lại vào ngày mai.",
+        "version": 4,
+        "created_at": "2026-11-22 11:30:00",
+        "shipment_parcels": [
+          {
+            "parcel_index": 1,
+            "parcel_barcode": "VS26112300007-01",
+            "length_cm": 26,
+            "width_cm": 20,
+            "height_cm": 16,
+            "actual_weight_gram": 2500,
+            "volumetric_weight_gram": 1400,
+            "chargeable_weight_gram": 2500,
+            "description": "Chai dung dịch đóng gói kín"
+          }
+        ],
+        "shipment_status_history": [
+          {
+            "from_status": "out_for_delivery",
+            "to_status": "delivery_failed",
+            "description": "Giao hàng chưa thành công, khách hẹn lại.",
+            "is_public_visible": 1,
+            "occurred_at": "2026-11-23 09:05:00"
+          }
+        ]
+      },
+      {
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6Z7",
+        "tracking_code": "VS26112300008",
+        "status": "pending_return",
+        "origin_branch_id": 3,
+        "destination_branch_id": 5,
+        "parcel_count": 1,
+        "chargeable_weight_gram": 4200,
+        "base_freight_amount": 51000,
+        "vas_amount": 10000,
+        "total_freight_amount": 61000,
+        "cod_amount": 1200000,
+        "delivery_attempt_count": 2,
+        "note": "Chờ điều phối duyệt chuyển hoàn.",
+        "version": 5,
+        "created_at": "2026-11-21 13:15:00",
+        "shipment_parcels": [
+          {
+            "parcel_index": 1,
+            "parcel_barcode": "VS26112300008-01",
+            "length_cm": 36,
+            "width_cm": 28,
+            "height_cm": 20,
+            "actual_weight_gram": 4200,
+            "volumetric_weight_gram": 3360,
+            "chargeable_weight_gram": 4200,
+            "description": "Thiết bị điện tử"
+          }
+        ],
+        "shipment_status_history": [
+          {
+            "from_status": "delivery_failed",
+            "to_status": "pending_return",
+            "description": "Chuyển trạng thái chờ duyệt hoàn.",
+            "is_public_visible": 1,
+            "occurred_at": "2026-11-23 09:20:00"
+          }
+        ]
       }
     ],
     "meta": {
       "pagination": {
         "page": 1,
         "per_page": 20,
-        "total": 1,
+        "total": 8,
         "total_pages": 1
       },
       "timestamp": "2026-11-23T09:35:00+07:00"
@@ -44,6 +408,7 @@
     "error": {
       "code": "404_NOT_FOUND",
       "message": "Không tìm thấy vận đơn của khách hàng",
+      "details": {},
       "trace_id": "ERR-20261123-SHP001"
     }
   }

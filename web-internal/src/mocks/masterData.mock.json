@@ -1,9 +1,202 @@
 {
   "success_response": {
     "success": true,
-    "message": "Lấy danh mục thành công",
+    "message": "Lấy danh mục vận chuyển thành công",
     "data": {
-      "id": 1
+      "service_types": [
+        {
+          "id": 1,
+          "code": "EXPRESS",
+          "name": "Hỏa tốc",
+          "description": "Dịch vụ chuyển phát ưu tiên nhanh.",
+          "estimated_days_min": 1,
+          "estimated_days_max": 1,
+          "is_active": 1
+        },
+        {
+          "id": 2,
+          "code": "STANDARD",
+          "name": "Nhanh",
+          "description": "Dịch vụ chuyển phát nhanh tiêu chuẩn.",
+          "estimated_days_min": 1,
+          "estimated_days_max": 2,
+          "is_active": 1
+        },
+        {
+          "id": 3,
+          "code": "ECONOMY",
+          "name": "Tiết kiệm",
+          "description": "Dịch vụ chuyển phát tiết kiệm.",
+          "estimated_days_min": 2,
+          "estimated_days_max": 4,
+          "is_active": 1
+        }
+      ],
+      "value_added_services": [
+        {
+          "id": 1,
+          "code": "DECLARED_VALUE_INSURANCE",
+          "name": "Bảo hiểm khai giá",
+          "fee_type": "percentage",
+          "fee_value": 0.5,
+          "min_fee": 5000,
+          "max_fee": 500000,
+          "is_active": 1
+        },
+        {
+          "id": 2,
+          "code": "OPEN_CHECK",
+          "name": "Đồng kiểm",
+          "fee_type": "fixed",
+          "fee_value": 10000,
+          "min_fee": 10000,
+          "max_fee": 10000,
+          "is_active": 1
+        },
+        {
+          "id": 3,
+          "code": "PROOF_OF_DELIVERY",
+          "name": "Báo phát",
+          "fee_type": "fixed",
+          "fee_value": 5000,
+          "min_fee": 5000,
+          "max_fee": 5000,
+          "is_active": 1
+        }
+      ],
+      "surcharges": [
+        {
+          "id": 1,
+          "code": "REMOTE_AREA",
+          "name": "Phụ phí vùng sâu",
+          "fee_type": "fixed",
+          "fee_value": 15000,
+          "is_auto_applied": 1,
+          "is_active": 1
+        },
+        {
+          "id": 2,
+          "code": "OVERSIZE",
+          "name": "Phụ phí quá khổ",
+          "fee_type": "fixed",
+          "fee_value": 20000,
+          "is_auto_applied": 0,
+          "is_active": 1
+        },
+        {
+          "id": 3,
+          "code": "FUEL",
+          "name": "Phụ phí nhiên liệu",
+          "fee_type": "percentage",
+          "fee_value": 5,
+          "is_auto_applied": 1,
+          "is_active": 1
+        }
+      ],
+      "cargo_categories": [
+        {
+          "id": 1,
+          "code": "DOCUMENT",
+          "name": "Tài liệu",
+          "description": "Hồ sơ và chứng từ giấy.",
+          "requires_special_handling": 0,
+          "is_active": 1
+        },
+        {
+          "id": 2,
+          "code": "FRAGILE",
+          "name": "Hàng dễ vỡ",
+          "description": "Hàng hóa cần đóng gói và xử lý cẩn thận.",
+          "requires_special_handling": 1,
+          "is_active": 1
+        },
+        {
+          "id": 3,
+          "code": "ELECTRONICS",
+          "name": "Điện tử",
+          "description": "Thiết bị điện tử và phụ kiện.",
+          "requires_special_handling": 1,
+          "is_active": 1
+        },
+        {
+          "id": 4,
+          "code": "LIQUID",
+          "name": "Chất lỏng",
+          "description": "Hàng hóa dạng lỏng được đóng gói an toàn.",
+          "requires_special_handling": 1,
+          "is_active": 1
+        }
+      ],
+      "pricing_tariffs": [
+        {
+          "id": 1,
+          "service_type_id": 1,
+          "zone_type": "intra_province",
+          "min_weight_gram": 0,
+          "max_weight_gram": 1000,
+          "base_price": 35000,
+          "step_weight_gram": 500,
+          "step_price": 5000,
+          "effective_from": "2026-01-01",
+          "effective_to": null,
+          "is_active": 1
+        },
+        {
+          "id": 2,
+          "service_type_id": 2,
+          "zone_type": "inter_region_near",
+          "min_weight_gram": 0,
+          "max_weight_gram": 1000,
+          "base_price": 30000,
+          "step_weight_gram": 500,
+          "step_price": 4000,
+          "effective_from": "2026-01-01",
+          "effective_to": null,
+          "is_active": 1
+        },
+        {
+          "id": 3,
+          "service_type_id": 3,
+          "zone_type": "inter_region_far",
+          "min_weight_gram": 0,
+          "max_weight_gram": 1000,
+          "base_price": 25000,
+          "step_weight_gram": 1000,
+          "step_price": 3000,
+          "effective_from": "2026-01-01",
+          "effective_to": null,
+          "is_active": 1
+        }
+      ],
+      "weight_conversion_rules": [
+        {
+          "id": 1,
+          "service_type_id": 1,
+          "divisor": 5000,
+          "min_chargeable_gram": 1000,
+          "effective_from": "2026-01-01",
+          "effective_to": null,
+          "is_active": 1
+        },
+        {
+          "id": 2,
+          "service_type_id": 2,
+          "divisor": 5000,
+          "min_chargeable_gram": 500,
+          "effective_from": "2026-01-01",
+          "effective_to": null,
+          "is_active": 1
+        },
+        {
+          "id": 3,
+          "service_type_id": 3,
+          "divisor": 6000,
+          "min_chargeable_gram": 500,
+          "effective_from": "2026-01-01",
+          "effective_to": null,
+          "is_active": 1
+        }
+      ]
     },
     "meta": {
       "timestamp": "2026-11-23T09:35:00+07:00"
@@ -14,14 +207,35 @@
     "message": "Lấy danh sách dịch vụ thành công",
     "data": [
       {
-        "id": 1
+        "id": 1,
+        "code": "EXPRESS",
+        "name": "Hỏa tốc",
+        "estimated_days_min": 1,
+        "estimated_days_max": 1,
+        "is_active": 1
+      },
+      {
+        "id": 2,
+        "code": "STANDARD",
+        "name": "Nhanh",
+        "estimated_days_min": 1,
+        "estimated_days_max": 2,
+        "is_active": 1
+      },
+      {
+        "id": 3,
+        "code": "ECONOMY",
+        "name": "Tiết kiệm",
+        "estimated_days_min": 2,
+        "estimated_days_max": 4,
+        "is_active": 1
       }
     ],
     "meta": {
       "pagination": {
         "page": 1,
         "per_page": 20,
-        "total": 1,
+        "total": 3,
         "total_pages": 1
       },
       "timestamp": "2026-11-23T09:35:00+07:00"
@@ -32,6 +246,7 @@
     "error": {
       "code": "404_NOT_FOUND",
       "message": "Không tìm thấy danh mục",
+      "details": {},
       "trace_id": "ERR-20261123-MST001"
     }
   }

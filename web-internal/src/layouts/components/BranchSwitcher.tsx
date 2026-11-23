@@ -12,18 +12,18 @@ import type { UserBranchScope } from "@/types/rbac.types";
 
 function getScopeLabel(scope: UserBranchScope): string {
   if (scope.scope_type === "warehouse" && scope.warehouse_id !== null) {
-    return `Kho #${scope.warehouse_id}`;
+    return scope.warehouse_name ?? `Kho #${scope.warehouse_id}`;
   }
 
   if (scope.scope_type === "post_office") {
-    return `Bưu cục #${scope.branch_id}`;
+    return scope.branch_name ?? `Bưu cục #${scope.branch_id}`;
   }
 
   if (scope.scope_type === "region_center") {
-    return `Trung tâm vùng #${scope.branch_id}`;
+    return scope.branch_name ?? `Trung tâm vùng #${scope.branch_id}`;
   }
 
-  return `Chi nhánh #${scope.branch_id}`;
+  return scope.branch_name ?? `Chi nhánh #${scope.branch_id}`;
 }
 
 export function BranchSwitcher() {
@@ -80,7 +80,7 @@ export function BranchSwitcher() {
         <SelectContent>
           {branchScopes.map((scope) => (
             <SelectItem
-              key={scope.id}
+              key={`${scope.scope_type}:${scope.branch_id}:${scope.warehouse_id}`}
               value={String(scope.branch_id)}
             >
               {getScopeLabel(scope)}
