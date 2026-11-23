@@ -1,0 +1,7 @@
+/vendor/
+.env
+/composer.phar
+/storage/logs/*.log
+/storage/uploads/*
+!/storage/uploads/.htaccess
+!/storage/uploads/.gitkeep

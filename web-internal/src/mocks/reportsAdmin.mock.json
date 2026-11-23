@@ -1,0 +1,41 @@
+{
+  "success_response": {
+    "success": true,
+    "message": "Lấy cấu hình hệ thống thành công",
+    "data": {
+      "setting_value": "20",
+      "is_secret": 0,
+      "updated_by": 1
+    },
+    "meta": {
+      "timestamp": "2026-11-23T09:35:00+07:00"
+    }
+  },
+  "pagination_response": {
+    "success": true,
+    "message": "Lấy nhật ký kiểm toán thành công",
+    "data": [
+      {
+        "user_id": 1,
+        "branch_id": 1
+      }
+    ],
+    "meta": {
+      "pagination": {
+        "page": 1,
+        "per_page": 20,
+        "total": 1,
+        "total_pages": 1
+      },
+      "timestamp": "2026-11-23T09:35:00+07:00"
+    }
+  },
+  "error_response": {
+    "success": false,
+    "error": {
+      "code": "403_FORBIDDEN",
+      "message": "Bạn không có quyền truy cập báo cáo này",
+      "trace_id": "ERR-20261123-RPT001"
+    }
+  }
+}

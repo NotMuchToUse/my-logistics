@@ -1,0 +1,47 @@
+{
+  "success_response": {
+    "success": true,
+    "message": "Lấy hồ sơ sự cố thành công",
+    "data": {
+      "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6W7",
+      "shipment_id": 1,
+      "branch_id": 1,
+      "responsible_user_id": 201,
+      "reported_by": 202
+    },
+    "meta": {
+      "timestamp": "2026-11-23T09:35:00+07:00"
+    }
+  },
+  "pagination_response": {
+    "success": true,
+    "message": "Lấy danh sách hồ sơ đền bù thành công",
+    "data": [
+      {
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6W8",
+        "shipment_id": 1,
+        "incident_id": 1,
+        "branch_id": 1,
+        "responsible_user_id": 201,
+        "version": 1
+      }
+    ],
+    "meta": {
+      "pagination": {
+        "page": 1,
+        "per_page": 20,
+        "total": 1,
+        "total_pages": 1
+      },
+      "timestamp": "2026-11-23T09:35:00+07:00"
+    }
+  },
+  "error_response": {
+    "success": false,
+    "error": {
+      "code": "404_NOT_FOUND",
+      "message": "Không tìm thấy hồ sơ sự cố",
+      "trace_id": "ERR-20261123-INC001"
+    }
+  }
+}
