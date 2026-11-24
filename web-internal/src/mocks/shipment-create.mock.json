@@ -1,0 +1,10 @@
+{
+  "success": true,
+  "message": "Địa giới minh họa để kiểm thử giao diện, không dùng tạo vận đơn thật.",
+  "data": {
+    "provinces": [{ "id": 901, "name": "Tỉnh mẫu A", "is_active": 1 }, { "id": 902, "name": "Tỉnh mẫu B", "is_active": 1 }],
+    "districts": [{ "id": 911, "province_id": 901, "name": "Huyện mẫu A1", "is_active": 1 }, { "id": 912, "province_id": 902, "name": "Huyện mẫu B1", "is_active": 1 }],
+    "wards": [{ "id": 921, "district_id": 911, "name": "Xã mẫu A1", "is_active": 1 }, { "id": 922, "district_id": 912, "name": "Xã mẫu B1", "is_active": 1 }]
+  },
+  "meta": { "timestamp": "2026-11-24T00:00:00+07:00" }
+}

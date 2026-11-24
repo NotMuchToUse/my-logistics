@@ -1,0 +1,105 @@
+{
+  "success_response": {
+    "success": true,
+    "message": "Lấy dữ liệu danh mục thành công",
+    "data": {
+      "service_types": [
+        {
+          "id": 1,
+          "code": "EXPRESS",
+          "name": "Hỏa tốc",
+          "description": "Dịch vụ chuyển phát ưu tiên nhanh.",
+          "estimated_days_min": 1,
+          "estimated_days_max": 1,
+          "is_active": 1
+        }
+      ],
+      "value_added_services": [
+        {
+          "id": 1,
+          "code": "DECLARED_VALUE_INSURANCE",
+          "name": "Bảo hiểm khai giá",
+          "fee_type": "percentage",
+          "fee_value": 0.5,
+          "min_fee": 5000,
+          "max_fee": 500000,
+          "is_active": 1
+        }
+      ],
+      "surcharges": [
+        {
+          "id": 1,
+          "code": "REMOTE_AREA",
+          "name": "Phụ phí vùng sâu",
+          "fee_type": "fixed",
+          "fee_value": 15000,
+          "is_auto_applied": 1,
+          "is_active": 1
+        }
+      ],
+      "pricing_tariffs": [
+        {
+          "id": 1,
+          "service_type_id": 1,
+          "zone_type": "intra_province",
+          "min_weight_gram": 0,
+          "max_weight_gram": 1000,
+          "base_price": 35000,
+          "step_weight_gram": 500,
+          "step_price": 5000,
+          "effective_from": "2026-01-01",
+          "effective_to": null,
+          "is_active": 1
+        }
+      ],
+      "weight_conversion_rules": [
+        {
+          "id": 1,
+          "service_type_id": 1,
+          "divisor": 5000,
+          "min_chargeable_gram": 1000,
+          "effective_from": "2026-01-01",
+          "effective_to": null,
+          "is_active": 1
+        }
+      ]
+    },
+    "meta": {
+      "timestamp": "2026-11-23T09:35:00+07:00"
+    }
+  },
+  "pagination_response": {
+    "success": true,
+    "message": "Lấy danh sách danh mục thành công",
+    "data": [
+      {
+        "id": 1,
+        "code": "EXPRESS",
+        "name": "Hỏa tốc",
+        "estimated_days_min": 1,
+        "estimated_days_max": 1,
+        "is_active": 1
+      }
+    ],
+    "meta": {
+      "pagination": {
+        "page": 1,
+        "per_page": 20,
+        "total": 1,
+        "total_pages": 1
+      },
+      "timestamp": "2026-11-23T09:35:00+07:00"
+    }
+  },
+  "error_response": {
+    "success": false,
+    "error": {
+      "code": "422_VALIDATION_ERROR",
+      "message": "Dữ liệu danh mục không hợp lệ",
+      "details": {
+        "code": ["Mã danh mục đã được sử dụng."]
+      },
+      "trace_id": "ERR-20261123-MST001"
+    }
+  }
+}

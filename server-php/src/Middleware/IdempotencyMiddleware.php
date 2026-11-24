@@ -24,7 +24,14 @@ final class IdempotencyMiddleware implements MiddlewareInterface
     public function process(Request $request, callable $next): Response
     {
         $auth = $request->attribute('auth');
-        if (!is_array($auth) || !isset($auth['user_id'])) {
+        if (
+            !is_array($auth)
+            || !isset($auth['user_id'])
+        ) {
+            if ($request->method() === 'POST' && $request->path() === '/api/v1/auth/register') {
+                return $this->processPublicRegistration($request, $next);
+            }
+
             throw new ApiException('401_UNAUTHORIZED', 'Idempotency yêu cầu người dùng đã xác thực.');
         }
 
@@ -54,6 +61,116 @@ final class IdempotencyMiddleware implements MiddlewareInterface
         }
 
         return $response;
+    }
+
+    /**
+     * Serialize public registration retries without changing the user-owned idempotency schema.
+     *
+     * @param callable(Request): Response $next
+     */
+    private function processPublicRegistration(Request $request, callable $next): Response
+    {
+        if ($request->clientType() !== 'web_public') {
+            throw new ApiException('403_FORBIDDEN', 'Đăng ký chỉ được thực hiện từ web_public.');
+        }
+
+        $key = $request->idempotencyKey();
+        if ($key === null || preg_match(
+            '/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i',
+            trim($key),
+        ) !== 1) {
+            throw new ApiException('400_BAD_REQUEST', 'Idempotency-Key phải là UUID v4 hợp lệ.');
+        }
+
+        $key = trim($key);
+        $requestHash = hash('sha256', strtoupper($request->method()) . '|' . $request->path() . '|' . $request->rawBody());
+        $endpoint = strtoupper($request->method()) . ' ' . $request->path();
+        $lockName = 'authreg:' . substr(hash('sha256', $key), 0, 56);
+        $lockStatement = $this->pdo->prepare('SELECT GET_LOCK(:lock_name, 5)');
+        $lockStatement->execute([':lock_name' => $lockName]);
+
+        if ((int) $lockStatement->fetchColumn() !== 1) {
+            throw new ApiException(
+                '409_IDEMPOTENCY_DUPLICATE',
+                'Giao dịch đăng ký đang được xử lý, vui lòng không gửi lặp lại.',
+            );
+        }
+
+        try {
+            $existingStatement = $this->pdo->prepare(
+                'SELECT id, request_hash, status, response_code, response_body,
+                        user_id, TIMESTAMPDIFF(SECOND, created_at, NOW()) AS elapsed_seconds
+                 FROM idempotency_keys
+                 WHERE idempotency_key = :idempotency_key
+                   AND endpoint = :endpoint
+                 ORDER BY id DESC
+                 LIMIT 1'
+            );
+            $existingStatement->execute([
+                ':idempotency_key' => $key,
+                ':endpoint' => $endpoint,
+            ]);
+            $existing = $existingStatement->fetch(PDO::FETCH_ASSOC);
+
+            if ($existing !== false) {
+                if (!hash_equals((string) $existing['request_hash'], $requestHash)) {
+                    throw new ApiException(
+                        '409_IDEMPOTENCY_DUPLICATE',
+                        'Idempotency-Key đã được sử dụng cho nội dung request khác.',
+                    );
+                }
+
+                if ($existing['status'] === 'completed') {
+                    if ($existing['response_code'] === null || $existing['response_body'] === null) {
+                        throw new ApiException('500_INTERNAL_ERROR', 'Phản hồi đăng ký đã hoàn tất nhưng thiếu dữ liệu.');
+                    }
+
+                    return Response::fromStoredJson(
+                        (string) $existing['response_body'],
+                        (int) $existing['response_code'],
+                    );
+                }
+
+                if (
+                    $existing['status'] !== 'processing'
+                    || (int) $existing['elapsed_seconds'] < self::STALE_PROCESSING_SECONDS
+                ) {
+                    throw new ApiException(
+                        '409_IDEMPOTENCY_DUPLICATE',
+                        'Giao dịch đăng ký đang được xử lý, vui lòng thử lại sau.',
+                    );
+                }
+
+                $request->setAttribute('public_idempotency_recovery', [
+                    'record_id' => (int) $existing['id'],
+                    'user_id' => (int) $existing['user_id'],
+                    'request_hash' => $requestHash,
+                    'endpoint' => $endpoint,
+                    'idempotency_key' => $key,
+                ]);
+            } else {
+                $request->setAttribute('public_idempotency', [
+                    'request_hash' => $requestHash,
+                    'endpoint' => $endpoint,
+                    'idempotency_key' => $key,
+                ]);
+            }
+
+            $response = $next($request);
+            $recordId = $request->attribute('idempotency_record_id');
+            if (
+                $response->statusCode() >= 200
+                && $response->statusCode() < 300
+                && is_int($recordId)
+            ) {
+                $this->markCompleted($recordId, $response->statusCode(), $response->body());
+            }
+
+            return $response;
+        } finally {
+            $releaseStatement = $this->pdo->prepare('SELECT RELEASE_LOCK(:lock_name)');
+            $releaseStatement->execute([':lock_name' => $lockName]);
+        }
     }
 
     /**

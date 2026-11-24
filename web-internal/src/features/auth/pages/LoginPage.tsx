@@ -1,12 +1,9 @@
-import { KeyRound } from "lucide-react";
-import { PagePlaceholder } from "@/components/shared/PagePlaceholder";
+import { LoginForm } from "@/features/auth/components/LoginForm";
 
 export function LoginPage() {
   return (
-    <PagePlaceholder
-      title="Đăng nhập cổng vận hành"
-      description="Đăng nhập bằng thông tin tài khoản nhân viên Vietstar."
-      icon={KeyRound}
-    />
+    <main className="flex min-h-screen items-center justify-center bg-muted/30 p-4 sm:p-6">
+      <LoginForm />
+    </main>
   );
 }

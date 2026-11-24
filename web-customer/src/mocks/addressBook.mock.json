@@ -1,14 +1,23 @@
 {
   "success_response": {
     "success": true,
-    "message": "Lấy địa chỉ thành công",
+    "message": "Lấy sổ địa chỉ thành công",
     "data": {
-      "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6W1",
+      "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6X3",
       "customer_id": 101,
-      "province_id": 1,
-      "district_id": 1,
-      "ward_id": 1,
-      "phone_masked": "090***6789"
+      "address_type": "sender",
+      "label": "Nhà riêng",
+      "contact_name": "Trần Ngọc Mai",
+      "phone_masked": "091***2468",
+      "province_id": 48,
+      "district_id": 490,
+      "ward_id": 20194,
+      "address_line": "35 Lê Duẩn",
+      "latitude": 16.0678,
+      "longitude": 108.2208,
+      "is_default": 1,
+      "created_at": "2026-11-20 10:00:00",
+      "updated_at": "2026-11-20 10:00:00"
     },
     "meta": {
       "timestamp": "2026-11-23T09:35:00+07:00"
@@ -19,19 +28,71 @@
     "message": "Lấy sổ địa chỉ thành công",
     "data": [
       {
-        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6W1",
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6X3",
         "customer_id": 101,
+        "address_type": "sender",
+        "label": "Nhà riêng",
+        "contact_name": "Trần Ngọc Mai",
+        "phone_masked": "091***2468",
+        "province_id": 48,
+        "district_id": 490,
+        "ward_id": 20194,
+        "address_line": "35 Lê Duẩn",
+        "latitude": 16.0678,
+        "longitude": 108.2208,
+        "is_default": 1
+      },
+      {
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6X4",
+        "customer_id": 101,
+        "address_type": "receiver",
+        "label": "Văn phòng Hà Nội",
+        "contact_name": "Nguyễn Hoàng Nam",
+        "phone_masked": "093***1122",
         "province_id": 1,
         "district_id": 1,
         "ward_id": 1,
-        "phone_masked": "090***6789"
+        "address_line": "28 Trần Hưng Đạo",
+        "latitude": 21.0278,
+        "longitude": 105.8342,
+        "is_default": 0
+      },
+      {
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6X5",
+        "customer_id": 101,
+        "address_type": "both",
+        "label": "Bưu cục nhận hàng",
+        "contact_name": "Trần Ngọc Mai",
+        "phone_masked": "091***2468",
+        "province_id": 48,
+        "district_id": 490,
+        "ward_id": 20200,
+        "address_line": "120 Ngô Quyền",
+        "latitude": 16.0712,
+        "longitude": 108.2381,
+        "is_default": 0
+      },
+      {
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6X6",
+        "customer_id": 101,
+        "address_type": "receiver",
+        "label": "Người thân",
+        "contact_name": "Phạm Thùy Linh",
+        "phone_masked": "091***2468",
+        "province_id": 79,
+        "district_id": 760,
+        "ward_id": 26734,
+        "address_line": "12 Nguyễn Huệ",
+        "latitude": 10.7769,
+        "longitude": 106.7009,
+        "is_default": 0
       }
     ],
     "meta": {
       "pagination": {
         "page": 1,
         "per_page": 20,
-        "total": 1,
+        "total": 4,
         "total_pages": 1
       },
       "timestamp": "2026-11-23T09:35:00+07:00"
@@ -43,7 +104,9 @@
       "code": "422_VALIDATION_ERROR",
       "message": "Thông tin địa chỉ không hợp lệ",
       "details": {
-        "province_id": ["Vui lòng chọn tỉnh hoặc thành phố"]
+        "province_id": [
+          "Vui lòng chọn tỉnh hoặc thành phố"
+        ]
       },
       "trace_id": "ERR-20261123-ADR001"
     }

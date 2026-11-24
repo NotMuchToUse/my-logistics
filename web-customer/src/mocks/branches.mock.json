@@ -1,12 +1,215 @@
 {
   "success_response": {
     "success": true,
-    "message": "Lấy thông tin bưu cục thành công",
+    "message": "Lấy mạng lưới bưu cục thành công",
     "data": {
-      "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6W0",
-      "province_id": 1,
-      "district_id": 1,
-      "ward_id": 1
+      "branches": [
+        {
+          "id": 1,
+          "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6W0",
+          "parent_branch_id": null,
+          "code": "VS-HQ-HCM",
+          "name": "Trụ sở Vietstar Hồ Chí Minh",
+          "branch_type": "hq",
+          "province_id": 79,
+          "district_id": 760,
+          "ward_id": 26734,
+          "address_line": "12 Nguyễn Huệ",
+          "latitude": 10.7769,
+          "longitude": 106.7009,
+          "operating_hours": "08:00-17:30",
+          "accepts_counter_dropoff": 1,
+          "is_active": 1
+        },
+        {
+          "id": 2,
+          "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6W1",
+          "parent_branch_id": 1,
+          "code": "VS-RH-DNG",
+          "name": "Trung tâm vùng Đà Nẵng",
+          "branch_type": "regional_hub",
+          "province_id": 48,
+          "district_id": 490,
+          "ward_id": 20194,
+          "address_line": "88 Nguyễn Văn Linh",
+          "latitude": 16.0544,
+          "longitude": 108.2022,
+          "operating_hours": "06:00-22:00",
+          "accepts_counter_dropoff": 1,
+          "is_active": 1
+        },
+        {
+          "id": 3,
+          "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6W2",
+          "parent_branch_id": 2,
+          "code": "VS-DNG",
+          "name": "Chi nhánh Đà Nẵng",
+          "branch_type": "branch",
+          "province_id": 48,
+          "district_id": 490,
+          "ward_id": 20194,
+          "address_line": "35 Lê Duẩn",
+          "latitude": 16.0678,
+          "longitude": 108.2208,
+          "operating_hours": "07:00-20:00",
+          "accepts_counter_dropoff": 1,
+          "is_active": 1
+        },
+        {
+          "id": 4,
+          "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6W3",
+          "parent_branch_id": 3,
+          "code": "VS-DNG-SONTRA",
+          "name": "Bưu cục Sơn Trà",
+          "branch_type": "post_office",
+          "province_id": 48,
+          "district_id": 490,
+          "ward_id": 20200,
+          "address_line": "120 Ngô Quyền",
+          "latitude": 16.0712,
+          "longitude": 108.2381,
+          "operating_hours": "07:30-19:00",
+          "accepts_counter_dropoff": 1,
+          "is_active": 1
+        },
+        {
+          "id": 5,
+          "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6W4",
+          "parent_branch_id": 1,
+          "code": "VS-HN",
+          "name": "Chi nhánh Hà Nội",
+          "branch_type": "branch",
+          "province_id": 1,
+          "district_id": 1,
+          "ward_id": 1,
+          "address_line": "28 Trần Hưng Đạo",
+          "latitude": 21.0278,
+          "longitude": 105.8342,
+          "operating_hours": "07:00-20:00",
+          "accepts_counter_dropoff": 1,
+          "is_active": 1
+        }
+      ],
+      "warehouses": [
+        {
+          "id": 1,
+          "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6X0",
+          "branch_id": 2,
+          "code": "VS-DNG-HUB-WH",
+          "name": "Kho khai thác Đà Nẵng",
+          "warehouse_type": "hub_sorting",
+          "address_line": "88 Nguyễn Văn Linh",
+          "latitude": 16.0544,
+          "longitude": 108.2022,
+          "max_capacity_parcels": 12000,
+          "is_active": 1
+        },
+        {
+          "id": 2,
+          "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6X1",
+          "branch_id": 3,
+          "code": "VS-DNG-BR-WH",
+          "name": "Kho chi nhánh Đà Nẵng",
+          "warehouse_type": "branch_warehouse",
+          "address_line": "35 Lê Duẩn",
+          "latitude": 16.0678,
+          "longitude": 108.2208,
+          "max_capacity_parcels": 5000,
+          "is_active": 1
+        },
+        {
+          "id": 3,
+          "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6X2",
+          "branch_id": 4,
+          "code": "VS-DNG-SONTRA-ST",
+          "name": "Kho lưu trữ Sơn Trà",
+          "warehouse_type": "post_office_storage",
+          "address_line": "120 Ngô Quyền",
+          "latitude": 16.0712,
+          "longitude": 108.2381,
+          "max_capacity_parcels": 1200,
+          "is_active": 1
+        }
+      ],
+      "provinces": [
+        {
+          "id": 1,
+          "code": "01",
+          "name": "Hà Nội",
+          "region": "north",
+          "is_active": 1
+        },
+        {
+          "id": 48,
+          "code": "48",
+          "name": "Đà Nẵng",
+          "region": "central",
+          "is_active": 1
+        },
+        {
+          "id": 79,
+          "code": "79",
+          "name": "Thành phố Hồ Chí Minh",
+          "region": "south",
+          "is_active": 1
+        }
+      ],
+      "districts": [
+        {
+          "id": 1,
+          "province_id": 1,
+          "code": "001",
+          "name": "Ba Đình",
+          "is_remote_area": 0,
+          "is_active": 1
+        },
+        {
+          "id": 490,
+          "province_id": 48,
+          "code": "490",
+          "name": "Hải Châu",
+          "is_remote_area": 0,
+          "is_active": 1
+        },
+        {
+          "id": 760,
+          "province_id": 79,
+          "code": "760",
+          "name": "Quận 1",
+          "is_remote_area": 0,
+          "is_active": 1
+        }
+      ],
+      "wards": [
+        {
+          "id": 1,
+          "district_id": 1,
+          "code": "00001",
+          "name": "Phường Phúc Xá",
+          "is_active": 1
+        },
+        {
+          "id": 20194,
+          "district_id": 490,
+          "code": "20194",
+          "name": "Phường Hải Châu I",
+          "is_active": 1
+        },
+        {
+          "id": 20200,
+          "district_id": 490,
+          "code": "20200",
+          "name": "Phường An Hải Bắc",
+          "is_active": 1
+        },
+        {
+          "id": 26734,
+          "district_id": 760,
+          "code": "26734",
+          "name": "Phường Bến Nghé",
+          "is_active": 1
+        }
+      ]
     },
     "meta": {
       "timestamp": "2026-11-23T09:35:00+07:00"
@@ -17,17 +220,86 @@
     "message": "Lấy danh sách bưu cục thành công",
     "data": [
       {
+        "id": 1,
         "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6W0",
+        "parent_branch_id": null,
+        "code": "VS-HQ-HCM",
+        "name": "Trụ sở Vietstar Hồ Chí Minh",
+        "branch_type": "hq",
+        "province_id": 79,
+        "district_id": 760,
+        "ward_id": 26734,
+        "address_line": "12 Nguyễn Huệ",
+        "latitude": 10.7769,
+        "longitude": 106.7009,
+        "is_active": 1
+      },
+      {
+        "id": 2,
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6W1",
+        "parent_branch_id": 1,
+        "code": "VS-RH-DNG",
+        "name": "Trung tâm vùng Đà Nẵng",
+        "branch_type": "regional_hub",
+        "province_id": 48,
+        "district_id": 490,
+        "ward_id": 20194,
+        "address_line": "88 Nguyễn Văn Linh",
+        "latitude": 16.0544,
+        "longitude": 108.2022,
+        "is_active": 1
+      },
+      {
+        "id": 3,
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6W2",
+        "parent_branch_id": 2,
+        "code": "VS-DNG",
+        "name": "Chi nhánh Đà Nẵng",
+        "branch_type": "branch",
+        "province_id": 48,
+        "district_id": 490,
+        "ward_id": 20194,
+        "address_line": "35 Lê Duẩn",
+        "latitude": 16.0678,
+        "longitude": 108.2208,
+        "is_active": 1
+      },
+      {
+        "id": 4,
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6W3",
+        "parent_branch_id": 3,
+        "code": "VS-DNG-SONTRA",
+        "name": "Bưu cục Sơn Trà",
+        "branch_type": "post_office",
+        "province_id": 48,
+        "district_id": 490,
+        "ward_id": 20200,
+        "address_line": "120 Ngô Quyền",
+        "latitude": 16.0712,
+        "longitude": 108.2381,
+        "is_active": 1
+      },
+      {
+        "id": 5,
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6W4",
+        "parent_branch_id": 1,
+        "code": "VS-HN",
+        "name": "Chi nhánh Hà Nội",
+        "branch_type": "branch",
         "province_id": 1,
         "district_id": 1,
-        "ward_id": 1
+        "ward_id": 1,
+        "address_line": "28 Trần Hưng Đạo",
+        "latitude": 21.0278,
+        "longitude": 105.8342,
+        "is_active": 1
       }
     ],
     "meta": {
       "pagination": {
         "page": 1,
         "per_page": 20,
-        "total": 1,
+        "total": 5,
         "total_pages": 1
       },
       "timestamp": "2026-11-23T09:35:00+07:00"
@@ -38,6 +310,7 @@
     "error": {
       "code": "404_NOT_FOUND",
       "message": "Không tìm thấy bưu cục",
+      "details": {},
       "trace_id": "ERR-20261123-BRN001"
     }
   }

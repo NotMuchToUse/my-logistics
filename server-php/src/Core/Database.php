@@ -11,6 +11,7 @@ use Throwable;
 final class Database
 {
     private static ?PDO $connection = null;
+    private static int $transactionDepth = 0;
 
     /**
      * @param array<string, mixed>|null $config
@@ -53,19 +54,37 @@ final class Database
     public static function transaction(callable $callback): mixed
     {
         $pdo = self::getConnection();
-        $pdo->beginTransaction();
+        $ownsTransaction = !$pdo->inTransaction();
+        $savepoint = 'app_nested_' . self::$transactionDepth;
+
+        if ($ownsTransaction) {
+            $pdo->beginTransaction();
+        } else {
+            $pdo->exec('SAVEPOINT ' . $savepoint);
+        }
+
+        self::$transactionDepth++;
 
         try {
             $result = $callback($pdo);
-            $pdo->commit();
+            if ($ownsTransaction) {
+                $pdo->commit();
+            } else {
+                $pdo->exec('RELEASE SAVEPOINT ' . $savepoint);
+            }
 
             return $result;
         } catch (Throwable $exception) {
-            if ($pdo->inTransaction()) {
+            if ($ownsTransaction && $pdo->inTransaction()) {
                 $pdo->rollBack();
+            } elseif (!$ownsTransaction && $pdo->inTransaction()) {
+                $pdo->exec('ROLLBACK TO SAVEPOINT ' . $savepoint);
+                $pdo->exec('RELEASE SAVEPOINT ' . $savepoint);
             }
 
             throw $exception;
+        } finally {
+            self::$transactionDepth--;
         }
     }
 }

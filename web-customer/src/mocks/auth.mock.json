@@ -3,12 +3,59 @@
     "success": true,
     "message": "Đăng nhập thành công",
     "data": {
-      "token": "mock-customer-access-token",
+      "access_token": "mock-customer-access-token",
+      "token_type": "Bearer",
+      "expires_at": "2026-11-24T09:30:00+07:00",
       "user": {
-        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6V8"
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6V9",
+        "full_name": "Trần Ngọc Mai",
+        "email": "khachhang@vietstar.test",
+        "user_type": "customer",
+        "must_change_password": false
       },
       "customer": {
-        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6V9"
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6VA",
+        "customer_code": "CUS01JDC9X8K2M4N6P8Q0R2S4T6VB",
+        "customer_type": "individual",
+        "company_name": null,
+        "tax_code": null,
+        "full_name": "Trần Ngọc Mai",
+        "phone_masked": "091***2468",
+        "email": "khachhang@vietstar.test"
+      },
+      "roles": [
+        "customer_individual"
+      ],
+      "permissions": [],
+      "branch_scopes": []
+    },
+    "meta": {
+      "timestamp": "2026-11-23T09:30:00+07:00"
+    }
+  },
+  "register_success_response": {
+    "success": true,
+    "message": "Đăng ký thành công",
+    "data": {
+      "access_token": "mock-customer-register-access-token",
+      "token_type": "Bearer",
+      "expires_at": "2026-11-24T09:30:00+07:00",
+      "user": {
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6V8",
+        "full_name": "Trần Ngọc Mai",
+        "email": "khachhang@vietstar.test",
+        "user_type": "customer",
+        "must_change_password": false
+      },
+      "customer": {
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6V9",
+        "customer_code": "CUS01JDC9X8K2M4N6P8Q0R2S4T6VB",
+        "customer_type": "individual",
+        "company_name": null,
+        "tax_code": null,
+        "full_name": "Trần Ngọc Mai",
+        "phone_masked": "091***2468",
+        "email": "khachhang@vietstar.test"
       }
     },
     "meta": {
@@ -17,7 +64,7 @@
   },
   "pagination_response": {
     "success": true,
-    "message": "Lấy danh sách phiên đăng nhập thành công",
+    "message": "Lấy lịch sử phiên đăng nhập thành công",
     "data": [],
     "meta": {
       "pagination": {
@@ -32,12 +79,10 @@
   "error_response": {
     "success": false,
     "error": {
-      "code": "422_VALIDATION_ERROR",
-      "message": "Thông tin đăng nhập không hợp lệ",
-      "details": {
-        "phone": ["Số điện thoại không đúng định dạng"]
-      },
-      "trace_id": "ERR-20261123-AUTH001"
+      "code": "401_UNAUTHORIZED",
+      "message": "Thông tin đăng nhập không chính xác.",
+      "details": {},
+      "trace_id": "ERR-20261123-AUTH002"
     }
   }
 }

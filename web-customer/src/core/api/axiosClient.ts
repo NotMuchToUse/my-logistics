@@ -2,6 +2,7 @@ import axios, {
   type AxiosError,
   type InternalAxiosRequestConfig,
 } from "axios";
+import { toast } from "sonner";
 import { useCustomerAuthStore } from "@/core/stores/useCustomerAuthStore";
 import {
   type ApiErrorCode,
@@ -30,6 +31,11 @@ const STATUS_ERROR_CODES: Record<number, ApiErrorCode> = {
   422: "422_VALIDATION_ERROR",
   429: "429_TOO_MANY_REQUESTS",
 };
+
+export const USE_MOCK = import.meta.env.VITE_USE_MOCK === "true";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.DEV ? "http://localhost:8000" : undefined);
 
 function isApiErrorResponse(value: unknown): value is ApiErrorResponse {
   if (
@@ -141,7 +147,7 @@ function configureRequest(
 }
 
 const axiosClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: API_BASE_URL,
   headers: {
     Accept: "application/json",
     "X-Client-Type": "web_public",
@@ -154,8 +160,21 @@ axiosClient.interceptors.response.use(
   (error: AxiosError<unknown>) => {
     const apiError = normalizeApiError(error);
 
-    if (apiError.error.code === "401_UNAUTHORIZED") {
-      redirectUnauthorized();
+    switch (apiError.error.code) {
+      case "401_UNAUTHORIZED":
+        redirectUnauthorized();
+        break;
+      case "403_BRANCH_SCOPE":
+        toast.error("Bạn không có quyền truy cập phạm vi chi nhánh này.");
+        break;
+      case "403_FORBIDDEN":
+        toast.error("Bạn không có quyền thực hiện thao tác này.");
+        break;
+      case "409_VERSION_CONFLICT":
+        toast.warning("Dữ liệu vừa được người khác cập nhật, vui lòng tải lại.");
+        break;
+      default:
+        break;
     }
 
     return Promise.reject(apiError);

@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import { DynamicSidebar } from "@/layouts/components/DynamicSidebar";
 import { Topbar } from "@/layouts/components/Topbar";
 import { useAuthStore } from "@/core/stores/useAuthStore";
+import { ChangePasswordForm } from "@/features/auth/components/ChangePasswordForm";
 import {
   Dialog,
   DialogContent,
@@ -20,7 +21,9 @@ import {
 export function InternalLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const mustChangePassword = useAuthStore(
-    (state) => state.user?.must_change_password === 1,
+    (state) =>
+      state.user?.must_change_password === 1 ||
+      state.user?.must_change_password === true,
   );
 
   return (
@@ -63,6 +66,7 @@ export function InternalLayout() {
               hành. Các thao tác bên dưới đang được khóa.
             </DialogDescription>
           </DialogHeader>
+          <ChangePasswordForm />
         </DialogContent>
       </Dialog>
     </div>

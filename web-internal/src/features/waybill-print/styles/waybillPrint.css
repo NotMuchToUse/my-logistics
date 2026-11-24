@@ -1,0 +1,30 @@
+.wp-preview { max-width: 100%; overflow: auto; border: 1px solid #ddd; background: #f4f4f5; padding: 12px; }
+.wp-document { box-sizing: border-box; background: white; color: black; font: 11pt Arial, sans-serif; overflow-wrap: anywhere; margin: 0 auto 12px; }
+.wp-document * { box-sizing: border-box; }
+.wp-document header { text-align: center; margin-bottom: 4mm; }
+.wp-document h2 { font-size: 16pt; font-weight: bold; margin: 2mm 0; }
+.wp-document h3 { font-weight: bold; margin-bottom: 2mm; }
+.wp-document p { margin: 1.5mm 0; }
+.wp-a4 { width: 210mm; min-height: 297mm; padding: 10mm; }
+.wp-label { width: 100mm; min-height: 150mm; padding: 4mm; font-size: 10pt; }
+.wp-sticker { width: 70mm; min-height: 50mm; padding: 4mm; font-size: 8pt; }
+.wp-sticker header { margin-bottom: 1mm; }
+.wp-contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+.wp-contact { border: 1px solid #777; padding: 3mm; margin: 3mm 0; break-inside: avoid; }
+.wp-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2mm; margin: 5mm 0; }
+.wp-detail-grid dd { text-align: right; font-variant-numeric: tabular-nums; }
+.wp-barcode { margin: 3mm 0; break-inside: avoid; }
+.wp-barcode svg { display: block; width: 100%; height: 16mm; }
+.wp-sticker .wp-barcode svg { height: 12mm; }
+.wp-barcode figcaption, .wp-code { font-family: monospace; text-align: center; overflow-wrap: anywhere; }
+.wp-barcode figcaption { font-size: 9pt; margin-top: 1mm; }
+.wp-parcels { width: 100%; border-collapse: collapse; font-size: 10pt; }
+.wp-parcels td, .wp-parcels th { border: 1px solid #777; padding: 2mm; text-align: left; }
+.wp-parcels tr { break-inside: avoid; }
+.wp-demo { font-size: 8pt; }
+@media print {
+  .wp-document { margin: 0; break-after: page; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .wp-document:last-child { break-after: auto; }
+  .wp-barcode, .wp-contact { break-inside: avoid; }
+  .wp-parcels thead { display: table-header-group; }
+}

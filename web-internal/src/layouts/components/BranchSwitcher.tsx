@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -7,55 +6,39 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useBranchScopeStore } from "@/core/stores/useBranchScopeStore";
+import {
+  getScopeKey,
+  useBranchScopeStore,
+} from "@/core/stores/useBranchScopeStore";
 import type { UserBranchScope } from "@/types/rbac.types";
 
 function getScopeLabel(scope: UserBranchScope): string {
-  if (scope.scope_type === "warehouse" && scope.warehouse_id !== null) {
-    return `Kho #${scope.warehouse_id}`;
+  if (scope.scope_type === "hq_all") {
+    return "Toàn hệ thống";
   }
 
-  if (scope.scope_type === "post_office") {
-    return `Bưu cục #${scope.branch_id}`;
+  const branchLabel =
+    scope.branch_name ??
+    (scope.scope_type === "post_office"
+      ? `Bưu cục #${scope.branch_id}`
+      : scope.scope_type === "region_center"
+        ? `Trung tâm vùng #${scope.branch_id}`
+        : `Chi nhánh #${scope.branch_id}`);
+
+  if (scope.warehouse_id !== null) {
+    const warehouseLabel =
+      scope.warehouse_name ?? `Kho #${scope.warehouse_id}`;
+
+    return `${branchLabel} · ${warehouseLabel}`;
   }
 
-  if (scope.scope_type === "region_center") {
-    return `Trung tâm vùng #${scope.branch_id}`;
-  }
-
-  return `Chi nhánh #${scope.branch_id}`;
+  return branchLabel;
 }
 
 export function BranchSwitcher() {
   const scopes = useBranchScopeStore((state) => state.scopes);
-  const activeBranchId = useBranchScopeStore(
-    (state) => state.activeBranchId,
-  );
-  const switchBranch = useBranchScopeStore((state) => state.switchBranch);
-  const branchScopes = useMemo(() => {
-    const availableScopes = new Map<number, UserBranchScope>();
-
-    for (const scope of scopes) {
-      if (
-        scope.branch_id !== null &&
-        !availableScopes.has(scope.branch_id)
-      ) {
-        availableScopes.set(scope.branch_id, scope);
-      }
-    }
-
-    return [...availableScopes.values()];
-  }, [scopes]);
-
-  function handleBranchChange(value: string): void {
-    const branchId = Number(value);
-
-    if (!Number.isSafeInteger(branchId)) {
-      throw new RangeError("Mã chi nhánh không hợp lệ.");
-    }
-
-    switchBranch(branchId);
-  }
+  const activeScope = useBranchScopeStore((state) => state.activeScope);
+  const switchScope = useBranchScopeStore((state) => state.switchScope);
 
   return (
     <div className="flex min-w-0 items-center gap-2">
@@ -66,9 +49,9 @@ export function BranchSwitcher() {
         Phạm vi
       </Label>
       <Select
-        value={activeBranchId === null ? "" : String(activeBranchId)}
-        onValueChange={handleBranchChange}
-        disabled={branchScopes.length === 0}
+        value={activeScope ? getScopeKey(activeScope) : ""}
+        onValueChange={switchScope}
+        disabled={scopes.length === 0}
       >
         <SelectTrigger
           id="active-branch"
@@ -78,10 +61,10 @@ export function BranchSwitcher() {
           <SelectValue placeholder="Chưa có phạm vi" />
         </SelectTrigger>
         <SelectContent>
-          {branchScopes.map((scope) => (
+          {scopes.map((scope) => (
             <SelectItem
-              key={scope.id}
-              value={String(scope.branch_id)}
+              key={getScopeKey(scope)}
+              value={getScopeKey(scope)}
             >
               {getScopeLabel(scope)}
             </SelectItem>
