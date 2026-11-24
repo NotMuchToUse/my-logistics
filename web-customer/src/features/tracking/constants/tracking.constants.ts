@@ -69,7 +69,10 @@ export function getServiceName(serviceTypeId: number): string {
 
 export function getTimelineBranchIds(
   status: string,
-  shipment: PublicTrackingShipment,
+  shipment: Pick<
+    PublicTrackingShipment,
+    "origin_branch_id" | "destination_branch_id"
+  >,
 ): number[] {
   switch (status) {
     case "pending_pickup":

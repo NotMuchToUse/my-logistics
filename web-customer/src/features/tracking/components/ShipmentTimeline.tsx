@@ -16,7 +16,12 @@ import {
 import type { PublicTrackingShipment } from "@/features/tracking/types/tracking.types";
 
 interface ShipmentTimelineProps {
-  shipment: PublicTrackingShipment;
+  shipment: Pick<
+    PublicTrackingShipment,
+    | "shipment_status_history"
+    | "origin_branch_id"
+    | "destination_branch_id"
+  >;
 }
 
 export function ShipmentTimeline({ shipment }: ShipmentTimelineProps) {
