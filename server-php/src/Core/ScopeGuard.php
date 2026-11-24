@@ -12,37 +12,62 @@ final class ScopeGuard
      * @param array<string, mixed> $scopeContext
      * @param array<string, mixed> $params
      */
-    public static function buildBranchWhereClause(
+    public static function applyBranchFilter(
         array $scopeContext,
         string $branchColumn,
         array &$params,
     ): string {
         self::assertSafeColumn($branchColumn);
-        if (self::hasHqScope($scopeContext)) {
+        if (self::hasUnrestrictedHqScope($scopeContext)) {
             return '1 = 1';
         }
 
+        return self::buildScopeFilter(
+            $branchColumn,
+            self::scopeValues($scopeContext, 'allowed_branch_ids'),
+            'branch',
+            $params,
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $scopeContext
+     * @param array<string, mixed> $params
+     */
+    public static function applyWarehouseFilter(
+        array $scopeContext,
+        string $warehouseColumn,
+        array &$params,
+    ): string {
+        self::assertSafeColumn($warehouseColumn);
+        if (self::hasUnrestrictedHqScope($scopeContext)) {
+            return '1 = 1';
+        }
+
+        return self::buildScopeFilter(
+            $warehouseColumn,
+            self::scopeValues($scopeContext, 'allowed_warehouse_ids'),
+            'warehouse',
+            $params,
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $scopeContext
+     * @param array<string, mixed> $params
+     */
+    public static function buildBranchWhereClause(
+        array $scopeContext,
+        string $branchColumn,
+        array &$params,
+    ): string {
         $columnParts = explode('.', $branchColumn);
         $columnName = strtolower((string) end($columnParts));
-        $isWarehouseColumn = str_ends_with($columnName, 'warehouse_id');
-        $scopeKey = $isWarehouseColumn ? 'allowed_warehouse_ids' : 'allowed_branch_ids';
-        $scopeValues = self::scopeValues($scopeContext, $scopeKey);
-        if ($scopeValues === []) {
-            throw new ApiException('403_BRANCH_SCOPE', 'Người dùng không có phạm vi truy cập phù hợp.');
+        if (str_ends_with($columnName, 'warehouse_id')) {
+            return self::applyWarehouseFilter($scopeContext, $branchColumn, $params);
         }
 
-        $placeholders = [];
-        foreach ($scopeValues as $index => $scopeValue) {
-            $parameterName = ':scope_' . ($isWarehouseColumn ? 'warehouse' : 'branch') . '_' . $index;
-            while (array_key_exists($parameterName, $params)) {
-                $parameterName .= '_';
-            }
-
-            $placeholders[] = $parameterName;
-            $params[$parameterName] = $scopeValue;
-        }
-
-        return $branchColumn . ' IN (' . implode(', ', $placeholders) . ')';
+        return self::applyBranchFilter($scopeContext, $branchColumn, $params);
     }
 
     /**
@@ -50,20 +75,51 @@ final class ScopeGuard
      */
     public static function assertBranchAccess(array $scopeContext, int $targetBranchId): void
     {
-        if (self::hasHqScope($scopeContext)) {
+        if (self::hasUnrestrictedHqScope($scopeContext)) {
             return;
         }
 
         if (!in_array($targetBranchId, self::scopeValues($scopeContext, 'allowed_branch_ids'), true)) {
-            throw new ApiException('403_BRANCH_SCOPE', 'Bạn không có quyền truy cập chi nhánh này.');
+            throw new ApiException(
+                '403_BRANCH_SCOPE',
+                'Không có quyền thao tác trên chi nhánh/kho này',
+                [],
+                403,
+            );
         }
     }
 
     /**
      * @param array<string, mixed> $scopeContext
      */
-    private static function hasHqScope(array $scopeContext): bool
+    public static function assertWarehouseAccess(array $scopeContext, int $targetWarehouseId): void
     {
+        if (self::hasUnrestrictedHqScope($scopeContext)) {
+            return;
+        }
+
+        if (!in_array($targetWarehouseId, self::scopeValues($scopeContext, 'allowed_warehouse_ids'), true)) {
+            throw new ApiException(
+                '403_BRANCH_SCOPE',
+                'Không có quyền thao tác trên chi nhánh/kho này',
+                [],
+                403,
+            );
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $scopeContext
+     */
+    private static function hasUnrestrictedHqScope(array $scopeContext): bool
+    {
+        if (($scopeContext['active_branch_id'] ?? null) !== null) {
+            return false;
+        }
+
+        if (($scopeContext['is_hq_all'] ?? false) === true) {
+            return true;
+        }
         if (($scopeContext['scope_type'] ?? null) === 'hq_all') {
             return true;
         }
@@ -84,7 +140,9 @@ final class ScopeGuard
     private static function scopeValues(array $scopeContext, string $key): array
     {
         $values = [];
-        $scopes = $scopeContext['scopes'] ?? [$scopeContext];
+        $scopes = array_key_exists($key, $scopeContext)
+            ? [$scopeContext]
+            : ($scopeContext['scopes'] ?? [$scopeContext]);
         foreach ($scopes as $scope) {
             if (!is_array($scope)) {
                 continue;
@@ -100,6 +158,34 @@ final class ScopeGuard
         }
 
         return array_values($values);
+    }
+
+    /**
+     * @param array<int, int> $scopeValues
+     * @param array<string, mixed> $params
+     */
+    private static function buildScopeFilter(
+        string $column,
+        array $scopeValues,
+        string $scopeKind,
+        array &$params,
+    ): string {
+        if ($scopeValues === []) {
+            return '0 = 1';
+        }
+
+        $placeholders = [];
+        foreach ($scopeValues as $index => $scopeValue) {
+            $parameterName = ':scope_' . $scopeKind . '_' . $index;
+            while (array_key_exists($parameterName, $params)) {
+                $parameterName .= '_';
+            }
+
+            $placeholders[] = $parameterName;
+            $params[$parameterName] = $scopeValue;
+        }
+
+        return $column . ' IN (' . implode(', ', $placeholders) . ')';
     }
 
     private static function assertSafeColumn(string $column): void

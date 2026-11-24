@@ -35,39 +35,39 @@ return static function (Router $router): void {
 
     $router->post('/api/v1/shipments', [$controller, 'create'], [
         $auth,
-        new PermissionMiddleware($pdo, 'shipments.create'),
+        new PermissionMiddleware($pdo, 'shipment.create'),
         $branchScope,
         $idempotency,
     ]);
     $router->get('/api/v1/shipments', [$controller, 'index'], [
         $auth,
-        new PermissionMiddleware($pdo, 'shipments.read'),
+        new PermissionMiddleware($pdo, 'shipment.read'),
         $branchScope,
     ]);
     $router->get('/api/v1/shipments/{public_id}', [$controller, 'show'], [
         $auth,
-        new PermissionMiddleware($pdo, 'shipments.read'),
+        new PermissionMiddleware($pdo, 'shipment.read'),
         $branchScope,
     ]);
     $router->patch('/api/v1/shipments/{public_id}/priority', [$controller, 'updatePriority'], [
         $auth,
-        new PermissionMiddleware($pdo, 'shipments.priority'),
+        new PermissionMiddleware($pdo, 'shipment.priority'),
         $branchScope,
     ]);
     $router->post('/api/v1/shipments/{public_id}/cancel', [$controller, 'cancel'], [
         $auth,
-        new PermissionMiddleware($pdo, 'shipments.cancel'),
+        new PermissionMiddleware($pdo, 'shipment.cancel'),
         $branchScope,
     ]);
     $router->post('/api/v1/shipments/{public_id}/forward', [$controller, 'forward'], [
         $auth,
-        new PermissionMiddleware($pdo, 'shipments.forward'),
+        new PermissionMiddleware($pdo, 'shipment.forward'),
         $branchScope,
         $idempotency,
     ]);
     $router->post('/api/v1/shipments/{public_id}/print-logs', [$controller, 'recordPrint'], [
         $auth,
-        new PermissionMiddleware($pdo, 'shipments.print'),
+        new PermissionMiddleware($pdo, 'shipment.print'),
         $branchScope,
     ]);
 };
