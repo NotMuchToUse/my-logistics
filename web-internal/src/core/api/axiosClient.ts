@@ -8,6 +8,9 @@ import { useBranchScopeStore } from "@/core/stores/useBranchScopeStore";
 import type { ApiErrorCode, ApiErrorResponse } from "@/types/api.types";
 
 export const USE_MOCK = import.meta.env.VITE_USE_MOCK === "true";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.DEV ? "http://localhost:8000" : undefined);
 
 const API_ERROR_CODES: readonly ApiErrorCode[] = [
   "400_BAD_REQUEST",
@@ -175,7 +178,7 @@ function handleApiError(error: unknown): Promise<never> {
 }
 
 const axiosClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: API_BASE_URL,
   headers: {
     Accept: "application/json",
     "X-Client-Type": "web_internal",
