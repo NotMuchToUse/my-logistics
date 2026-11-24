@@ -1,0 +1,56 @@
+{
+  "success_response": {
+    "success": true,
+    "message": "Dữ liệu minh họa KHA-29, không phải HTTP contract chính thức",
+    "data": {
+      "shipment": {
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6V8",
+        "tracking_code": "000VS26112400001",
+        "sender_name": "Người gửi mẫu",
+        "sender_phone_masked": "090***0000",
+        "sender_address_detail": "Địa chỉ gửi minh họa, phường mẫu, quận mẫu, thành phố mẫu",
+        "receiver_name": "Người nhận mẫu",
+        "receiver_phone_masked": "091***0000",
+        "receiver_address_detail": "Địa chỉ nhận minh họa dài để kiểm tra xuống dòng: tòa nhà mẫu, khu dân cư mẫu, phường mẫu, quận mẫu, thành phố mẫu",
+        "parcel_count": 3,
+        "actual_weight_gram": 4500,
+        "volumetric_weight_gram": 3600,
+        "chargeable_weight_gram": 4700,
+        "base_freight_amount": "30000.00",
+        "surcharge_amount": "5000.00",
+        "vas_amount": "3000.00",
+        "discount_amount": "2000.00",
+        "vat_amount": "2880.00",
+        "total_freight_amount": "38880.00",
+        "cod_amount": "250000.00",
+        "declared_value": "500000.00",
+        "payment_method": "ngttn",
+        "created_at": "2026-11-24 10:00:00"
+      },
+      "parcels": [
+        { "id": "103", "parcel_barcode": "000VS26112400001-03", "parcel_sequence": 3, "actual_weight_gram": 2000 },
+        { "id": "101", "parcel_barcode": "000VS26112400001-01", "parcel_sequence": 1, "actual_weight_gram": 1000 },
+        { "id": "102", "parcel_barcode": "000VS26112400001-02", "parcel_sequence": 2, "actual_weight_gram": 1500 }
+      ]
+    },
+    "meta": { "timestamp": "2026-11-24T10:00:00+07:00" }
+  },
+  "pagination_response": {
+    "success": true,
+    "message": "Dải mã minh họa; quy tắc CRUD Mock không phải nghiệp vụ đã được Backend chốt",
+    "data": [
+      { "id": "1", "branch_id": null, "prefix": "MOCK-A", "start_number": "100", "end_number": "200", "current_number": "150", "status": "active", "created_at": "2026-11-24 10:00:00", "updated_at": "2026-11-24 10:00:00" },
+      { "id": "2", "branch_id": null, "prefix": "MOCK-E", "start_number": "1", "end_number": "99", "current_number": "99", "status": "exhausted", "created_at": "2026-11-24 10:00:00", "updated_at": "2026-11-24 10:00:00" },
+      { "id": "3", "branch_id": null, "prefix": "MOCK-I", "start_number": "9007199254740993", "end_number": "9007199254741993", "current_number": "9007199254740992", "status": "inactive", "created_at": "2026-11-24 10:00:00", "updated_at": "2026-11-24 10:00:00" }
+    ],
+    "meta": { "timestamp": "2026-11-24T10:00:00+07:00", "pagination": { "page": 1, "per_page": 20, "total": 3, "total_pages": 1 } }
+  },
+  "empty_response": {
+    "success": true, "message": "Không có dải mã", "data": [],
+    "meta": { "timestamp": "2026-11-24T10:00:00+07:00", "pagination": { "page": 1, "per_page": 20, "total": 0, "total_pages": 0 } }
+  },
+  "error_response": {
+    "success": false,
+    "error": { "code": "422_VALIDATION_ERROR", "message": "Dữ liệu không hợp lệ", "details": { "prefix": ["Tiền tố không hợp lệ."] }, "trace_id": "ERR-MOCK-KHA29" }
+  }
+}
