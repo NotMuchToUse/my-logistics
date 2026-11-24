@@ -40,6 +40,7 @@ export const shipmentDraftSchema = z.object({
   receiver: contactSchema,
   parcels: parcelListSchema,
   serviceTypeId: selectedId,
+  cargoCategoryId: selectedId,
   selectedVasIds: z.array(selectedId).refine((ids) => new Set(ids).size === ids.length, "DVGT không được trùng."),
   codAmount: moneyInputSchema,
   declaredValue: moneyInputSchema,
