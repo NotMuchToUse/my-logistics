@@ -8,6 +8,7 @@ use App\Core\ApiException;
 use App\Core\Crypto;
 use App\Core\Database;
 use App\Core\ScopeGuard;
+use App\Core\UlidGenerator;
 use PDO;
 
 final class PickupRepository
@@ -28,6 +29,12 @@ final class PickupRepository
             ScopeGuard::applyBranchFilter($scopeContext, 'pr.branch_id', $params),
         ];
 
+        if (!empty($filters['branch_id'])) {
+            $requestedBranchId = (int) $filters['branch_id'];
+            ScopeGuard::assertBranchAccess($scopeContext, $requestedBranchId);
+            $where[] = 'pr.branch_id = :filter_branch_id';
+            $params[':filter_branch_id'] = $requestedBranchId;
+        }
         if (!empty($filters['status'])) {
             $where[] = 'pr.status = :status';
             $params[':status'] = (string) $filters['status'];
@@ -50,6 +57,15 @@ final class PickupRepository
                 $where[] = "pr.status IN ('pending', 'assigned', 'accepted') AND pr.sla_deadline_at <= DATE_ADD(NOW(), INTERVAL 30 MINUTE)";
             }
         }
+        if (!empty($filters['search'])) {
+            $kw = '%' . trim((string) $filters['search']) . '%';
+            $where[] = '(pr.request_code LIKE :search1 OR pr.sender_name LIKE :search2 OR pr.sender_phone_masked LIKE :search3 OR pr.pickup_address LIKE :search4 OR drv.full_name LIKE :search5)';
+            $params[':search1'] = $kw;
+            $params[':search2'] = $kw;
+            $params[':search3'] = $kw;
+            $params[':search4'] = $kw;
+            $params[':search5'] = $kw;
+        }
         if (!empty($filters['request_code'])) {
             $where[] = 'pr.request_code LIKE :request_code';
             $params[':request_code'] = '%' . trim((string) $filters['request_code']) . '%';
@@ -68,7 +84,13 @@ final class PickupRepository
         }
 
         $whereSql = implode(' AND ', $where);
-        $countStmt = $this->pdo->prepare("SELECT COUNT(*) FROM pickup_requests pr WHERE {$whereSql}");
+        $countStmt = $this->pdo->prepare(
+            "SELECT COUNT(*)
+             FROM pickup_requests pr
+             INNER JOIN branches b ON b.id = pr.branch_id
+             LEFT JOIN users drv ON drv.id = pr.assigned_driver_id
+             WHERE {$whereSql}"
+        );
         $countStmt->execute($params);
         $total = (int) $countStmt->fetchColumn();
 
@@ -112,6 +134,106 @@ final class PickupRepository
     }
 
     /**
+     * @param array<string, mixed> $data
+     * @param array<string, mixed> $scopeContext
+     * @return array<string, mixed>
+     */
+    public function createRequest(
+        array $data,
+        array $scopeContext,
+        int $actorId,
+        string $ip,
+        ?string $userAgent
+    ): array {
+        return Database::transaction(function () use ($data, $scopeContext, $actorId, $ip, $userAgent): array {
+            $branchId = (int) ($data['branch_id'] ?? ($scopeContext['active_branch_id'] ?? 0));
+            if ($branchId < 1) {
+                throw new ApiException('422_VALIDATION_ERROR', 'Vui lòng chọn bưu cục tiếp nhận.', ['branch_id' => ['Bưu cục là bắt buộc']], 422);
+            }
+            ScopeGuard::assertBranchAccess($scopeContext, $branchId);
+
+            $bStmt = $this->pdo->prepare('SELECT id FROM branches WHERE id = :id AND is_active = 1 AND deleted_at IS NULL LIMIT 1');
+            $bStmt->execute([':id' => $branchId]);
+            if ($bStmt->fetchColumn() === false) {
+                throw new ApiException('422_VALIDATION_ERROR', 'Bưu cục không tồn tại hoặc ngừng hoạt động.', ['branch_id' => ['Bưu cục không hợp lệ']], 422);
+            }
+
+            $pickupMode = (string) ($data['pickup_mode'] ?? 'driver_pickup');
+            if (!in_array($pickupMode, ['driver_pickup', 'counter_dropoff'], true)) {
+                throw new ApiException('422_VALIDATION_ERROR', 'Hình thức lấy hàng không hợp lệ.', ['pickup_mode' => ['pickup_mode không hợp lệ']], 422);
+            }
+
+            $phone = trim((string) $data['sender_phone']);
+            $phoneHash = Crypto::hashPhone($phone);
+
+            // Tự động liên kết customer_id nếu SĐT đã có hồ sơ khách hàng
+            $cStmt = $this->pdo->prepare('SELECT id FROM customers WHERE phone_hash = :hash AND deleted_at IS NULL LIMIT 1');
+            $cStmt->execute([':hash' => $phoneHash]);
+            $customerIdRaw = $cStmt->fetchColumn();
+            $customerId = $customerIdRaw !== false ? (int) $customerIdRaw : null;
+
+            $slaStmt = $this->pdo->query('SELECT pickup_sla_minutes FROM sla_deadlines WHERE is_active = 1 ORDER BY id ASC LIMIT 1');
+            $slaRaw = $slaStmt->fetchColumn();
+            $slaMinutes = $slaRaw !== false ? max(30, (int) $slaRaw) : 120;
+
+            $publicId = UlidGenerator::generate();
+            $requestCode = 'PU' . date('ymd') . substr($publicId, -6);
+
+            $stmt = $this->pdo->prepare(
+                "INSERT INTO pickup_requests (
+                    public_id, request_code, customer_id, branch_id, pickup_mode,
+                    sender_name, sender_phone_encrypted, sender_phone_hash, sender_phone_masked,
+                    province_id, district_id, ward_id, pickup_address, latitude, longitude,
+                    estimated_parcel_count, estimated_weight_gram, note,
+                    sla_deadline_at, status, version, created_by
+                ) VALUES (
+                    :public_id, :request_code, :customer_id, :branch_id, :pickup_mode,
+                    :sender_name, :sender_phone_encrypted, :sender_phone_hash, :sender_phone_masked,
+                    :province_id, :district_id, :ward_id, :pickup_address, :latitude, :longitude,
+                    :estimated_parcel_count, :estimated_weight_gram, :note,
+                    DATE_ADD(NOW(), INTERVAL {$slaMinutes} MINUTE), 'pending', 1, :created_by
+                )"
+            );
+            $stmt->execute([
+                ':public_id' => $publicId,
+                ':request_code' => $requestCode,
+                ':customer_id' => $customerId,
+                ':branch_id' => $branchId,
+                ':pickup_mode' => $pickupMode,
+                ':sender_name' => trim((string) $data['sender_name']),
+                ':sender_phone_encrypted' => Crypto::encrypt($phone),
+                ':sender_phone_hash' => $phoneHash,
+                ':sender_phone_masked' => Crypto::maskPhone($phone),
+                ':province_id' => (int) $data['province_id'],
+                ':district_id' => (int) $data['district_id'],
+                ':ward_id' => (int) $data['ward_id'],
+                ':pickup_address' => trim((string) $data['pickup_address']),
+                ':latitude' => isset($data['latitude']) && $data['latitude'] !== '' ? (float) $data['latitude'] : null,
+                ':longitude' => isset($data['longitude']) && $data['longitude'] !== '' ? (float) $data['longitude'] : null,
+                ':estimated_parcel_count' => max(1, (int) ($data['estimated_parcel_count'] ?? 1)),
+                ':estimated_weight_gram' => max(1, (int) ($data['estimated_weight_gram'] ?? 500)),
+                ':note' => isset($data['note']) && trim((string) $data['note']) !== '' ? trim((string) $data['note']) : null,
+                ':created_by' => $actorId,
+            ]);
+
+            $newId = (int) $this->pdo->lastInsertId();
+            $this->writeAuditLog(
+                $actorId,
+                $branchId,
+                'CREATE_PICKUP_REQUEST',
+                'pickup_requests',
+                $newId,
+                null,
+                ['request_code' => $requestCode, 'branch_id' => $branchId, 'status' => 'pending'],
+                $ip,
+                $userAgent
+            );
+
+            return $this->findDetail($publicId, $scopeContext);
+        });
+    }
+
+    /**
      * @param array<string, mixed> $scopeContext
      * @return array<string, mixed>
      */
@@ -133,6 +255,7 @@ final class PickupRepository
         $scopeSql = ScopeGuard::applyBranchFilter($scopeContext, 'ubs.branch_id', $params);
 
         $sql = "SELECT DISTINCT u.id, u.public_id, u.employee_code, u.full_name, u.phone_masked,
+                       MIN(ubs.branch_id) AS branch_id,
                        (
                            SELECT COUNT(*)
                            FROM pickup_requests pr2
@@ -146,6 +269,7 @@ final class PickupRepository
                 WHERE u.is_active = 1
                   AND u.deleted_at IS NULL
                   AND ({$scopeSql})
+                GROUP BY u.id, u.public_id, u.employee_code, u.full_name, u.phone_masked
                 ORDER BY active_pickup_count ASC, u.full_name ASC";
 
         $stmt = $this->pdo->prepare($sql);
@@ -159,6 +283,7 @@ final class PickupRepository
                 'employee_code' => $row['employee_code'],
                 'full_name' => $row['full_name'],
                 'phone_masked' => $row['phone_masked'],
+                'branch_id' => $row['branch_id'] !== null ? (int) $row['branch_id'] : null,
                 'active_pickup_count' => (int) $row['active_pickup_count'],
             ];
         }
@@ -177,9 +302,10 @@ final class PickupRepository
         array $scopeContext,
         int $actorId,
         string $ip,
-        ?string $userAgent
+        ?string $userAgent,
+        bool $autoAssign = false
     ): array {
-        return Database::transaction(function () use ($identifier, $driverIdentifier, $expectedVersion, $scopeContext, $actorId, $ip, $userAgent): array {
+        return Database::transaction(function () use ($identifier, $driverIdentifier, $expectedVersion, $scopeContext, $actorId, $ip, $userAgent, $autoAssign): array {
             $row = $this->fetchRawPickup($identifier, true);
             $pickupId = (int) $row['id'];
             $branchId = (int) $row['branch_id'];
@@ -203,7 +329,9 @@ final class PickupRepository
                 );
             }
 
-            $driver = $this->resolveActivePickupDriver($driverIdentifier);
+            $driver = $autoAssign
+                ? $this->resolveLeastBusyDriverForBranch($branchId)
+                : $this->resolveActivePickupDriver($driverIdentifier);
             $driverId = (int) $driver['id'];
 
             $update = $this->pdo->prepare(
@@ -230,7 +358,7 @@ final class PickupRepository
             $this->writeAuditLog(
                 $actorId,
                 $branchId,
-                'ASSIGN_PICKUP_DRIVER',
+                $autoAssign ? 'AUTO_ASSIGN_PICKUP_DRIVER' : 'ASSIGN_PICKUP_DRIVER',
                 'pickup_requests',
                 $pickupId,
                 ['status' => $row['status'], 'assigned_driver_id' => $row['assigned_driver_id'], 'version' => (int) $row['version']],
@@ -365,6 +493,43 @@ final class PickupRepository
     /**
      * @return array<string, mixed>
      */
+    private function resolveLeastBusyDriverForBranch(int $branchId): array
+    {
+        $stmt = $this->pdo->prepare(
+            "SELECT u.id, u.public_id, u.employee_code, u.full_name,
+                    (
+                        SELECT COUNT(*)
+                        FROM pickup_requests pr2
+                        WHERE pr2.assigned_driver_id = u.id
+                          AND pr2.status IN ('assigned', 'accepted')
+                    ) AS active_pickup_count
+             FROM users u
+             INNER JOIN user_has_roles uhr ON uhr.user_id = u.id
+             INNER JOIN roles r ON r.id = uhr.role_id AND r.code = 'pickup_delivery_driver'
+             INNER JOIN user_branch_scopes ubs ON ubs.user_id = u.id AND ubs.branch_id = :branch_id
+             WHERE u.is_active = 1
+               AND u.deleted_at IS NULL
+             ORDER BY active_pickup_count ASC, u.id ASC
+             LIMIT 1"
+        );
+        $stmt->execute([':branch_id' => $branchId]);
+        $driver = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($driver === false) {
+            throw new ApiException(
+                '422_VALIDATION_ERROR',
+                'Chi nhánh hiện chưa có tài xế lấy/giao hàng đang hoạt động để gán tự động.',
+                ['driver_id' => ['Không có tài xế khả dụng']],
+                422,
+            );
+        }
+
+        return $driver;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
     private function resolveActivePickupDriver(string $driverIdentifier): array
     {
         $isId = ctype_digit($driverIdentifier);
@@ -398,6 +563,7 @@ final class PickupRepository
         $item = [
             'public_id' => $row['public_id'],
             'request_code' => $row['request_code'],
+            'customer_id' => $row['customer_id'] !== null ? (int) $row['customer_id'] : null,
             'branch_id' => (int) $row['branch_id'],
             'branch_public_id' => $row['branch_public_id'] ?? null,
             'branch_code' => $row['branch_code'] ?? null,
@@ -419,6 +585,9 @@ final class PickupRepository
             'minutes_remaining' => (int) ($row['minutes_remaining'] ?? 0),
             'is_sla_breached' => (bool) ($row['is_sla_breached'] ?? false),
             'is_sla_warning' => (bool) ($row['is_sla_warning'] ?? false),
+            'assigned_driver_id' => $row['assigned_driver_id'] !== null ? (int) $row['assigned_driver_id'] : null,
+            'assigned_driver_name' => $row['driver_name'] ?? null,
+            'assigned_driver_phone_masked' => $row['driver_phone_masked'] ?? null,
             'assigned_driver' => $row['assigned_driver_id'] !== null ? [
                 'id' => (int) $row['assigned_driver_id'],
                 'public_id' => $row['driver_public_id'] ?? null,

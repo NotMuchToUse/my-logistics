@@ -29,6 +29,30 @@ final class PickupDispatchController extends BaseController
         return $this->paginatedResponse($result['items'], $paging['page'], $paging['per_page'], $result['total'], 'Lấy danh sách yêu cầu lấy hàng thành công.');
     }
 
+    public function store(Request $request): Response
+    {
+        $body = $request->jsonBody();
+        $errors = [];
+        foreach (['sender_name', 'sender_phone', 'province_id', 'district_id', 'ward_id', 'pickup_address'] as $field) {
+            if (!isset($body[$field]) || trim((string) $body[$field]) === '') {
+                $errors[$field] = ["Trường {$field} là bắt buộc."];
+            }
+        }
+        if ($errors !== []) {
+            throw new ApiException('422_VALIDATION_ERROR', 'Dữ liệu tạo yêu cầu lấy hàng không hợp lệ.', $errors, 422);
+        }
+
+        $created = $this->repository->createRequest(
+            $body,
+            $this->scopeContext($request),
+            $this->actorId($request),
+            $request->ipAddress() ?? '127.0.0.1',
+            $request->userAgent(),
+        );
+
+        return Response::success($created, 'Tạo yêu cầu lấy hàng thành công.', 201);
+    }
+
     public function show(Request $request): Response
     {
         return Response::success(
@@ -48,12 +72,13 @@ final class PickupDispatchController extends BaseController
     public function assignDriver(Request $request): Response
     {
         $body = $request->jsonBody();
+        $autoAssign = !empty($body['auto_assign']);
         $driverIdentifier = (string) ($body['driver_id'] ?? $body['driver_public_id'] ?? '');
         $version = filter_var($body['version'] ?? null, FILTER_VALIDATE_INT);
 
         $errors = [];
-        if (trim($driverIdentifier) === '') {
-            $errors['driver_id'] = ['Vui lòng chọn tài xế lấy hàng.'];
+        if (!$autoAssign && trim($driverIdentifier) === '') {
+            $errors['driver_id'] = ['Vui lòng chọn tài xế lấy hàng hoặc bật chế độ gán tự động (auto_assign).'];
         }
         if ($version === false || $version < 1) {
             $errors['version'] = ['Trường version (Optimistic Locking) là bắt buộc và phải >= 1.'];
@@ -70,6 +95,7 @@ final class PickupDispatchController extends BaseController
             $this->actorId($request),
             $request->ipAddress() ?? '127.0.0.1',
             $request->userAgent(),
+            $autoAssign,
         );
 
         return Response::success($updated, 'Phân công tài xế lấy hàng thành công.');
