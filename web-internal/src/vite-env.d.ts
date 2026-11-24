@@ -8,3 +8,12 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+// declare module "jsbarcode" {
+//   function JsBarcode(
+//     element: unknown,
+//     text: string,
+//     options?: Record<string, unknown>,
+//   ): void;
+//   export = JsBarcode;
+// }
