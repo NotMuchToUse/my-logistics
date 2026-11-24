@@ -1,7 +1,8 @@
 import { Link, NavLink, Outlet } from "react-router-dom";
-import { Menu, PackageCheck, UserRound } from "lucide-react";
+import { Menu, PackageCheck } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { HeaderAuthStatus } from "@/features/auth/components/HeaderAuthStatus";
 import {
   Sheet,
   SheetContent,
@@ -59,17 +60,7 @@ export function PublicLayout() {
             <PublicNavigation />
           </div>
 
-          <div className="hidden items-center gap-2 md:flex">
-            <Button asChild variant="ghost" size="sm">
-              <Link to="/login">
-                <UserRound className="h-4 w-4" aria-hidden="true" />
-                Đăng nhập
-              </Link>
-            </Button>
-            <Button asChild size="sm">
-              <Link to="/register">Đăng ký</Link>
-            </Button>
-          </div>
+          <HeaderAuthStatus className="hidden items-center gap-2 md:flex" />
 
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
@@ -90,24 +81,10 @@ export function PublicLayout() {
               <PublicNavigation
                 onNavigate={() => setIsMobileMenuOpen(false)}
               />
-              <div className="mt-auto flex flex-col gap-2">
-                <Button asChild variant="outline">
-                  <Link
-                    to="/login"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Đăng nhập
-                  </Link>
-                </Button>
-                <Button asChild>
-                  <Link
-                    to="/register"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Đăng ký
-                  </Link>
-                </Button>
-              </div>
+              <HeaderAuthStatus
+                className="mt-auto flex flex-col gap-2"
+                onNavigate={() => setIsMobileMenuOpen(false)}
+              />
             </SheetContent>
           </Sheet>
         </div>

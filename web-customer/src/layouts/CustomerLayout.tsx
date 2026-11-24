@@ -1,7 +1,6 @@
-import { ContactRound, LogOut, Package, PackagePlus } from "lucide-react";
-import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { useCustomerAuthStore } from "@/core/stores/useCustomerAuthStore";
+import { ContactRound, Package, PackagePlus } from "lucide-react";
+import { Link, NavLink, Outlet } from "react-router-dom";
+import { HeaderAuthStatus } from "@/features/auth/components/HeaderAuthStatus";
 
 const customerLinks = [
   {
@@ -22,14 +21,6 @@ const customerLinks = [
 ];
 
 export function CustomerLayout() {
-  const logout = useCustomerAuthStore((state) => state.logout);
-  const navigate = useNavigate();
-
-  function handleLogout(): void {
-    logout();
-    navigate("/login", { replace: true });
-  }
-
   return (
     <div className="min-h-screen">
       <header className="border-b bg-background">
@@ -37,15 +28,7 @@ export function CustomerLayout() {
           <Link to="/" className="font-semibold tracking-tight">
             Vietstar Logistics
           </Link>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={handleLogout}
-          >
-            <LogOut className="h-4 w-4" aria-hidden="true" />
-            <span className="hidden sm:inline">Đăng xuất</span>
-          </Button>
+          <HeaderAuthStatus className="flex items-center gap-2" />
         </div>
       </header>
 
