@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Core;
 
+use InvalidArgumentException;
 use PDO;
 use PDOStatement;
-use InvalidArgumentException;
 
 abstract class BaseRepository
 {
@@ -73,5 +73,29 @@ abstract class BaseRepository
                 'Dữ liệu đã được cập nhật bởi người dùng khác. Vui lòng tải lại.',
             );
         }
+    }
+
+    /**
+     * @param array<string, mixed> $scopeContext
+     * @param array<string, mixed> $params
+     */
+    protected function applyBranchFilter(
+        array $scopeContext,
+        string $branchColumn,
+        array &$params,
+    ): string {
+        return ScopeGuard::applyBranchFilter($scopeContext, $branchColumn, $params);
+    }
+
+    /**
+     * @param array<string, mixed> $scopeContext
+     * @param array<string, mixed> $params
+     */
+    protected function applyWarehouseFilter(
+        array $scopeContext,
+        string $warehouseColumn,
+        array &$params,
+    ): string {
+        return ScopeGuard::applyWarehouseFilter($scopeContext, $warehouseColumn, $params);
     }
 }
