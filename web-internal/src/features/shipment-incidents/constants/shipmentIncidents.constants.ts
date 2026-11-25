@@ -1,0 +1,9 @@
+export const INCIDENT_TYPES = ['damaged', 'lost', 'wet_contaminated', 'wrong_delivery', 'delay_critical', 'other'] as const;
+export const CREATE_TYPES = ['damaged', 'lost', 'wet_contaminated'] as const;
+export const SEVERITIES = ['low', 'medium', 'high', 'critical'] as const;
+export const STATUSES = ['open', 'investigating', 'compensation_requested', 'resolved', 'closed'] as const;
+export const TYPE_LABELS = { damaged: 'Hư hỏng hàng hóa', lost: 'Mất mát / Thất lạc', wet_contaminated: 'Ướt / Nhiễm bẩn', wrong_delivery: 'Giao nhầm', delay_critical: 'Chậm trễ nghiêm trọng', other: 'Sự cố khác' };
+export const SEVERITY_LABELS = { low: 'Thấp', medium: 'Trung bình', high: 'Cao', critical: 'Nghiêm trọng' };
+export const STATUS_LABELS = { open: 'Mới báo cáo', investigating: 'Đang điều tra', compensation_requested: 'Đã đề xuất đền bù', resolved: 'Đã xử lý', closed: 'Đã đóng' };
+export const API_BLOCKED = 'Tích hợp sự cố chưa sẵn sàng: chờ API, định dạng dữ liệu và quyền thao tác được xác nhận.';
+export const FIELD_CLASS = 'w-full rounded-md border border-input bg-background px-3 py-2 text-base sm:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
