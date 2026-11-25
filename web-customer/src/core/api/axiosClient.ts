@@ -33,6 +33,9 @@ const STATUS_ERROR_CODES: Record<number, ApiErrorCode> = {
 };
 
 export const USE_MOCK = import.meta.env.VITE_USE_MOCK === "true";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.DEV ? "http://localhost:8000" : undefined);
 
 function isApiErrorResponse(value: unknown): value is ApiErrorResponse {
   if (
@@ -144,7 +147,7 @@ function configureRequest(
 }
 
 const axiosClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: API_BASE_URL,
   headers: {
     Accept: "application/json",
     "X-Client-Type": "web_public",

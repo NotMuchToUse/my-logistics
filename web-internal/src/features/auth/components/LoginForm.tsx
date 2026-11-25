@@ -18,25 +18,78 @@ import {
   loginSchema,
   type LoginFormValues,
 } from "@/features/auth/schemas/login.schema";
+import type { ApiErrorCode, ApiErrorResponse } from "@/types/api.types";
 
-function getErrorMessage(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message;
-  }
+const API_ERROR_CODES: readonly ApiErrorCode[] = [
+  "400_BAD_REQUEST",
+  "401_UNAUTHORIZED",
+  "403_FORBIDDEN",
+  "403_BRANCH_SCOPE",
+  "404_NOT_FOUND",
+  "409_VERSION_CONFLICT",
+  "409_IDEMPOTENCY_DUPLICATE",
+  "422_VALIDATION_ERROR",
+  "429_TOO_MANY_REQUESTS",
+  "500_INTERNAL_ERROR",
+];
 
+const SAFE_ERROR_MESSAGES: Record<ApiErrorCode, string> = {
+  "400_BAD_REQUEST": "Yêu cầu không hợp lệ. Vui lòng kiểm tra lại thông tin.",
+  "401_UNAUTHORIZED": "Thông tin đăng nhập không chính xác.",
+  "403_FORBIDDEN": "Tài khoản không được phép đăng nhập hoặc đã bị khóa.",
+  "403_BRANCH_SCOPE": "Tài khoản không có phạm vi truy cập phù hợp.",
+  "404_NOT_FOUND": "Không tìm thấy tài nguyên yêu cầu.",
+  "409_VERSION_CONFLICT": "Dữ liệu đã thay đổi. Vui lòng thử lại.",
+  "409_IDEMPOTENCY_DUPLICATE": "Yêu cầu đã được tiếp nhận trước đó.",
+  "422_VALIDATION_ERROR": "Thông tin đăng nhập chưa hợp lệ.",
+  "429_TOO_MANY_REQUESTS": "Bạn đăng nhập quá nhiều lần. Vui lòng thử lại sau.",
+  "500_INTERNAL_ERROR": "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.",
+};
+
+function isApiErrorResponse(value: unknown): value is ApiErrorResponse {
   if (
-    typeof error === "object" &&
-    error !== null &&
-    "error" in error &&
-    typeof error.error === "object" &&
-    error.error !== null &&
-    "message" in error.error &&
-    typeof error.error.message === "string"
+    typeof value !== "object" ||
+    value === null ||
+    !("success" in value) ||
+    value.success !== false ||
+    !("error" in value)
   ) {
-    return error.error.message;
+    return false;
   }
 
-  return "Không thể đăng nhập. Vui lòng thử lại.";
+  const apiError = value.error;
+  if (
+    typeof apiError !== "object" ||
+    apiError === null ||
+    !("code" in apiError) ||
+    typeof apiError.code !== "string" ||
+    !API_ERROR_CODES.some((code) => code === apiError.code) ||
+    !("message" in apiError) ||
+    typeof apiError.message !== "string"
+  ) {
+    return false;
+  }
+
+  if ("details" in apiError && apiError.details !== undefined) {
+    if (
+      typeof apiError.details !== "object" ||
+      apiError.details === null
+    ) {
+      return false;
+    }
+
+    const detailsAreValid = Object.values(apiError.details).every(
+      (messages) =>
+        Array.isArray(messages) &&
+        messages.every((message) => typeof message === "string"),
+    );
+
+    if (!detailsAreValid) {
+      return false;
+    }
+  }
+
+  return !("trace_id" in apiError) || typeof apiError.trace_id === "string";
 }
 
 export function LoginForm() {
@@ -58,9 +111,36 @@ export function LoginForm() {
     try {
       await login(values);
     } catch (error: unknown) {
+      if (!isApiErrorResponse(error)) {
+        setError("root.server", {
+          type: "server",
+          message: "Không thể kết nối đến máy chủ. Vui lòng thử lại.",
+        });
+        return;
+      }
+
+      if (error.error.code === "422_VALIDATION_ERROR" && error.error.details) {
+        const identifierMessage = error.error.details.identifier?.[0];
+        const passwordMessage = error.error.details.password?.[0];
+
+        if (identifierMessage) {
+          setError("identifier", {
+            type: "server",
+            message: identifierMessage,
+          });
+        }
+
+        if (passwordMessage) {
+          setError("password", {
+            type: "server",
+            message: passwordMessage,
+          });
+        }
+      }
+
       setError("root.server", {
         type: "server",
-        message: getErrorMessage(error),
+        message: SAFE_ERROR_MESSAGES[error.error.code],
       });
     }
   }

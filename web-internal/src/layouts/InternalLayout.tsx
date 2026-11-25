@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import { DynamicSidebar } from "@/layouts/components/DynamicSidebar";
 import { Topbar } from "@/layouts/components/Topbar";
 import { useAuthStore } from "@/core/stores/useAuthStore";
+import { ChangePasswordForm } from "@/features/auth/components/ChangePasswordForm";
 import {
   Dialog,
   DialogContent,
@@ -65,6 +66,7 @@ export function InternalLayout() {
               hành. Các thao tác bên dưới đang được khóa.
             </DialogDescription>
           </DialogHeader>
+          <ChangePasswordForm />
         </DialogContent>
       </Dialog>
     </div>

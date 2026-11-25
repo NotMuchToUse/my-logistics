@@ -12,8 +12,12 @@ npm install
 npm run dev
 ```
 
-Set `VITE_API_BASE_URL` and `VITE_USE_MOCK` in `.env` to configure the API
-endpoint and mock-data mode. See `.env.example` for local defaults.
+Copy `.env.example` to `.env` to configure the API endpoint and mock-data mode.
+`VITE_USE_MOCK=true` uses local mock data; it does not call the backend.
+For real API testing, set `VITE_USE_MOCK=false` and make sure the PHP API is
+running at `VITE_API_BASE_URL` (defaults to `http://localhost:8000` in Vite
+development). Configure the backend database and `CORS_ALLOWED_ORIGINS` to
+include the frontend origin. Restart Vite after changing `.env`.
 
 ## Validation
 

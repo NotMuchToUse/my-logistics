@@ -1,0 +1,217 @@
+{
+  "success_response": {
+    "success": true,
+    "message": "Lấy cấu hình vận hành thành công.",
+    "data": {
+      "sla_deadlines": [],
+      "routing_rules": [],
+      "partners": [],
+      "vehicles": []
+    },
+    "meta": {
+      "timestamp": "2026-11-24T00:00:00.000Z"
+    }
+  },
+  "pagination_response": {
+    "success": true,
+    "message": "Lấy danh sách cấu hình thành công.",
+    "data": [],
+    "meta": {
+      "timestamp": "2026-11-24T00:00:00.000Z",
+      "pagination": {
+        "page": 1,
+        "per_page": 20,
+        "total": 0,
+        "total_pages": 0
+      }
+    }
+  },
+  "error_responses": {
+    "bad_request": {
+      "success": false,
+      "error": {
+        "code": "400_BAD_REQUEST",
+        "message": "Yêu cầu cấu hình không hợp lệ."
+      }
+    },
+    "forbidden": {
+      "success": false,
+      "error": {
+        "code": "403_FORBIDDEN",
+        "message": "Bạn không có quyền truy cập cấu hình vận hành."
+      }
+    },
+    "not_found": {
+      "success": false,
+      "error": {
+        "code": "404_NOT_FOUND",
+        "message": "Không tìm thấy bản ghi cấu hình."
+      }
+    },
+    "validation": {
+      "success": false,
+      "error": {
+        "code": "422_VALIDATION_ERROR",
+        "message": "Dữ liệu cấu hình không hợp lệ.",
+        "details": {}
+      }
+    }
+  },
+  "data": {
+    "sla_deadlines": [
+      {
+        "id": "3001",
+        "service_type_id": 1,
+        "route_scope": "intra_province",
+        "pickup_sla_minutes": 180,
+        "warehouse_inbound_sla_minutes": 240,
+        "linehaul_sla_hours": 24,
+        "delivery_sla_hours": 36,
+        "max_storage_days_before_return": 5,
+        "is_active": 1,
+        "created_at": "2026-11-24T00:00:00.000Z",
+        "updated_at": "2026-11-24T00:00:00.000Z"
+      },
+      {
+        "id": "3002",
+        "service_type_id": 1,
+        "route_scope": "remote_area",
+        "pickup_sla_minutes": 240,
+        "warehouse_inbound_sla_minutes": 300,
+        "linehaul_sla_hours": 36,
+        "delivery_sla_hours": 48,
+        "max_storage_days_before_return": 7,
+        "is_active": 0,
+        "created_at": "2026-11-24T00:00:00.000Z",
+        "updated_at": "2026-11-24T00:00:00.000Z"
+      }
+    ],
+    "routing_rules": [
+      {
+        "id": "3101",
+        "origin_warehouse_id": 1,
+        "destination_branch_id": 3,
+        "next_hop_warehouse_id": 2,
+        "transport_mode": "truck",
+        "estimated_transit_hours": 12,
+        "is_active": 1,
+        "created_at": "2026-11-24T00:00:00.000Z",
+        "updated_at": "2026-11-24T00:00:00.000Z"
+      },
+      {
+        "id": "3102",
+        "origin_warehouse_id": 2,
+        "destination_branch_id": 5,
+        "next_hop_warehouse_id": 1,
+        "transport_mode": "air_cargo",
+        "estimated_transit_hours": 20,
+        "is_active": 1,
+        "created_at": "2026-11-24T00:00:00.000Z",
+        "updated_at": "2026-11-24T00:00:00.000Z"
+      },
+      {
+        "id": "3103",
+        "origin_warehouse_id": 3,
+        "destination_branch_id": 2,
+        "next_hop_warehouse_id": 1,
+        "transport_mode": "motorbike",
+        "estimated_transit_hours": 30,
+        "is_active": 0,
+        "created_at": "2026-11-24T00:00:00.000Z",
+        "updated_at": "2026-11-24T00:00:00.000Z"
+      }
+    ],
+    "partners": [
+      {
+        "id": "3201",
+        "code": "MOCK-3PL-01",
+        "name": "Đối tác vận tải mẫu",
+        "partner_type": "linehaul_carrier",
+        "contact_person": "Người liên hệ mẫu",
+        "contact_phone": "0000000000",
+        "api_endpoint": "https://api.example.test/tracking",
+        "is_active": 1,
+        "created_at": "2026-11-24T00:00:00.000Z",
+        "updated_at": "2026-11-24T00:00:00.000Z"
+      },
+      {
+        "id": "3202",
+        "code": "MOCK-3PL-02",
+        "name": "Đối tác giao nhận mẫu ngừng hoạt động",
+        "partner_type": "lastmile_3pl",
+        "contact_person": null,
+        "contact_phone": null,
+        "api_endpoint": null,
+        "is_active": 0,
+        "created_at": "2026-11-24T00:00:00.000Z",
+        "updated_at": "2026-11-24T00:00:00.000Z"
+      }
+    ],
+    "vehicles": [
+      {
+        "id": "3301",
+        "branch_id": 3,
+        "partner_id": "3201",
+        "plate_number": "MOCK-VAN-01",
+        "vehicle_type": "van",
+        "max_payload_kg": "1500.00",
+        "default_driver_id": "7001",
+        "status": "available",
+        "created_at": "2026-11-24T00:00:00.000Z",
+        "updated_at": "2026-11-24T00:00:00.000Z"
+      },
+      {
+        "id": "3302",
+        "branch_id": 2,
+        "partner_id": null,
+        "plate_number": "MOCK-TRUCK-02",
+        "vehicle_type": "truck_light",
+        "max_payload_kg": "3500.00",
+        "default_driver_id": null,
+        "status": "maintenance",
+        "created_at": "2026-11-24T00:00:00.000Z",
+        "updated_at": "2026-11-24T00:00:00.000Z"
+      },
+      {
+        "id": "3303",
+        "branch_id": 1,
+        "partner_id": "3202",
+        "plate_number": "MOCK-MOTO-03",
+        "vehicle_type": "motorbike",
+        "max_payload_kg": "250.00",
+        "default_driver_id": "7002",
+        "status": "in_transit",
+        "created_at": "2026-11-24T00:00:00.000Z",
+        "updated_at": "2026-11-24T00:00:00.000Z"
+      },
+      {
+        "id": "3304",
+        "branch_id": 5,
+        "partner_id": null,
+        "plate_number": "MOCK-TRUCK-04",
+        "vehicle_type": "truck_heavy",
+        "max_payload_kg": "12000.00",
+        "default_driver_id": null,
+        "status": "retired",
+        "created_at": "2026-11-24T00:00:00.000Z",
+        "updated_at": "2026-11-24T00:00:00.000Z"
+      }
+    ],
+    "drivers": [
+      {
+        "id": "7001",
+        "full_name": "Tài xế tổng hợp A",
+        "roles": ["pickup_delivery_driver"],
+        "status": "active",
+        "is_active": 1
+      },
+      {
+        "id": "7002",
+        "full_name": "Tài xế tổng hợp B",
+        "roles": ["linehaul_driver"],
+        "status": "active",
+        "is_active": 1
+      }
+    ]
+  }
+}
