@@ -61,6 +61,157 @@ final class ShipmentService
      * @param array<string, mixed> $scopeContext
      * @return array{items: array<int, array<string, mixed>>, total: int}
      */
+    /**
+     * Validate toàn bộ danh sách vận đơn từ Excel, cấp phát dải mã liên tục (FOR UPDATE)
+     * và tạo đồng loạt shipments, shipment_parcels, shipment_status_history, cod_transactions trong 1 Transaction.
+     *
+     * @param list<array{row_index: int, dto: CreateShipmentDto}> $validRows
+     * @param list<array{row_index: int, errors: array<string, list<string>>}> $initialRowErrors
+     * @param array<string, mixed> $scopeContext
+     * @return array<string, mixed>
+     */
+    public function bulkImport(
+        array $validRows,
+        array $initialRowErrors,
+        int $totalRows,
+        bool $dryRun,
+        array $scopeContext,
+        int $actorId,
+        string $ipAddress,
+        ?string $userAgent,
+    ): array {
+        $originBranchId = $this->activeBranchId($scopeContext);
+        ScopeGuard::assertBranchAccess($scopeContext, $originBranchId);
+        $rowErrors = $initialRowErrors;
+        $pricingDate = date('Y-m-d');
+        $validatedBatch = [];
+        foreach ($validRows as $entry) {
+            $rowIndex = $entry['row_index'];
+            /** @var CreateShipmentDto $dto */
+            $dto = $entry['dto'];
+            try {
+                $previewPricing = $this->pricingService->calculate(
+                    $dto,
+                    $originBranchId,
+                    'PREVIEW',
+                    $pricingDate,
+                );
+                $validatedBatch[] = [
+                    'row_index' => $rowIndex,
+                    'dto' => $dto,
+                    'preview_pricing' => $previewPricing,
+                ];
+            } catch (ApiException $exception) {
+                $details = $exception->details;
+                /** @var array<string, list<string>> $fieldErrors */
+                $fieldErrors = $details !== []
+                    ? $details
+                    : ['row' => [$exception->getMessage()]];
+                $rowErrors[] = [
+                    'row_index' => $rowIndex,
+                    'errors' => $fieldErrors,
+                ];
+            }
+        }
+        if ($rowErrors !== []) {
+            usort(
+                $rowErrors,
+                static fn (array $a, array $b): int => $a['row_index'] <=> $b['row_index'],
+            );
+            $invalidCount = count($rowErrors);
+            $validCount = max(0, $totalRows - $invalidCount);
+            throw new ApiException(
+                '422_VALIDATION_ERROR',
+                "Có {$invalidCount} dòng dữ liệu không hợp lệ trong danh sách import.",
+                [
+                    'total_rows' => $totalRows,
+                    'valid_rows' => $validCount,
+                    'invalid_rows' => $invalidCount,
+                    'row_errors' => $rowErrors,
+                ],
+            );
+        }
+        if ($dryRun) {
+            $previewItems = [];
+            $totalFreight = '0.00';
+            $totalCod = '0.00';
+            foreach ($validatedBatch as $item) {
+                /** @var CreateShipmentDto $dto */
+                $dto = $item['dto'];
+                $freight = (string) $item['preview_pricing']['total_freight_amount'];
+                $totalFreight = bcadd($totalFreight, $freight, 2);
+                $totalCod = bcadd($totalCod, $dto->codAmount, 2);
+                $previewItems[] = [
+                    'row_index' => $item['row_index'],
+                    'recipient_name' => $dto->recipientName,
+                    'chargeable_weight_gram' => $item['preview_pricing']['chargeable_weight_gram'],
+                    'total_freight_amount' => $freight,
+                    'cod_amount' => $dto->codAmount,
+                ];
+            }
+            return [
+                'dry_run' => true,
+                'total_rows' => $totalRows,
+                'valid_rows' => count($validatedBatch),
+                'total_freight_amount' => $totalFreight,
+                'total_cod_amount' => $totalCod,
+                'items' => $previewItems,
+            ];
+        }
+        return Database::transaction(function () use (
+            $validatedBatch,
+            $originBranchId,
+            $actorId,
+            $ipAddress,
+            $userAgent,
+        ): array {
+            $createdItems = [];
+            $totalFreight = '0.00';
+            $totalCod = '0.00';
+            foreach ($validatedBatch as $item) {
+                /** @var CreateShipmentDto $dto */
+                $dto = $item['dto'];
+                $created = $this->createShipmentInTransaction(
+                    $dto,
+                    $originBranchId,
+                    null,
+                    $actorId,
+                    $ipAddress,
+                    $userAgent,
+                );
+                $created['row_index'] = $item['row_index'];
+                $created['recipient_name'] = $dto->recipientName;
+                $createdItems[] = $created;
+                $totalFreight = bcadd($totalFreight, (string) $created['total_freight_amount'], 2);
+                $totalCod = bcadd($totalCod, (string) $created['cod_amount'], 2);
+            }
+            $firstCode = $createdItems[0]['tracking_code'] ?? null;
+            $lastCode = $createdItems[count($createdItems) - 1]['tracking_code'] ?? null;
+            $this->shipmentRepository->createAuditLog(
+                $actorId,
+                $originBranchId,
+                'BULK_IMPORT_SHIPMENTS',
+                0,
+                [],
+                [
+                    'total_imported' => count($createdItems),
+                    'tracking_code_from' => $firstCode,
+                    'tracking_code_to' => $lastCode,
+                ],
+                $ipAddress,
+                $userAgent,
+            );
+            return [
+                'total_imported' => count($createdItems),
+                'origin_branch_id' => $originBranchId,
+                'tracking_code_from' => $firstCode,
+                'tracking_code_to' => $lastCode,
+                'total_freight_amount' => $totalFreight,
+                'total_cod_amount' => $totalCod,
+                'items' => $createdItems,
+            ];
+        });
+    }
     public function paginate(ShipmentFilterDto $filters, array $scopeContext): array
     {
         return $this->shipmentRepository->paginate($filters, $scopeContext);

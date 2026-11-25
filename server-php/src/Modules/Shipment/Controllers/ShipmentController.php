@@ -10,6 +10,7 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Modules\Shipment\DTOs\ShipmentFilterDto;
 use App\Modules\Shipment\Services\ShipmentService;
+use App\Modules\Shipment\Validators\BulkImportShipmentValidator;
 use App\Modules\Shipment\Validators\CreateShipmentValidator;
 use App\Modules\Shipment\Validators\ShipmentActionValidator;
 use DateTimeImmutable;
@@ -38,6 +39,7 @@ final class ShipmentController extends BaseController
         private readonly ShipmentService $shipmentService,
         private readonly CreateShipmentValidator $createValidator,
         private readonly ShipmentActionValidator $actionValidator,
+        private readonly BulkImportShipmentValidator $bulkImportValidator,
     ) {
     }
 
@@ -54,6 +56,25 @@ final class ShipmentController extends BaseController
         return Response::success($shipment, 'Tạo vận đơn thành công.', 201);
     }
 
+    public function bulkImport(Request $request): Response
+    {
+        $validatedBatch = $this->bulkImportValidator->validateBatch($request->jsonBody());
+        $result = $this->shipmentService->bulkImport(
+            $validatedBatch['valid_rows'],
+            $validatedBatch['row_errors'],
+            $validatedBatch['total_rows'],
+            $validatedBatch['dry_run'],
+            $this->scopeContext($request),
+            $this->actorId($request),
+            $this->clientIp($request),
+            $request->userAgent(),
+        );
+        $statusCode = $validatedBatch['dry_run'] ? 200 : 201;
+        $message = $validatedBatch['dry_run']
+            ? 'Kiểm tra hợp lệ danh sách vận đơn import thành công.'
+            : 'Import danh sách vận đơn hàng loạt thành công.';
+        return Response::success($result, $message, $statusCode);
+    }
     public function index(Request $request): Response
     {
         $filters = $this->shipmentFilters($request);

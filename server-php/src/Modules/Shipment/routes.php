@@ -1,9 +1,7 @@
 <?php
-
 declare(strict_types=1);
-
-use App\Core\Router;
 use App\Core\Database;
+use App\Core\Router;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\BranchScopeMiddleware;
 use App\Middleware\IdempotencyMiddleware;
@@ -14,25 +12,33 @@ use App\Modules\Shipment\Repositories\ShipmentRepository;
 use App\Modules\Shipment\Repositories\TrackingRangeRepository;
 use App\Modules\Shipment\Services\ShipmentPricingService;
 use App\Modules\Shipment\Services\ShipmentService;
+use App\Modules\Shipment\Validators\BulkImportShipmentValidator;
 use App\Modules\Shipment\Validators\CreateShipmentValidator;
 use App\Modules\Shipment\Validators\ShipmentActionValidator;
-
 return static function (Router $router): void {
     $pdo = Database::getConnection();
+    $lookupRepository = new PricingLookupRepository($pdo);
+    $createValidator = new CreateShipmentValidator();
     $controller = new ShipmentController(
         new ShipmentService(
             $pdo,
             new ShipmentRepository($pdo),
             new TrackingRangeRepository($pdo),
-            new ShipmentPricingService(new PricingLookupRepository($pdo)),
+            new ShipmentPricingService($lookupRepository),
         ),
-        new CreateShipmentValidator(),
+        $createValidator,
         new ShipmentActionValidator(),
+        new BulkImportShipmentValidator($createValidator, $lookupRepository),
     );
     $auth = new AuthMiddleware($pdo);
     $branchScope = new BranchScopeMiddleware($pdo);
     $idempotency = new IdempotencyMiddleware($pdo);
-
+    $router->post('/api/v1/shipments/bulk-import', [$controller, 'bulkImport'], [
+        $auth,
+        new PermissionMiddleware($pdo, 'shipment.create'),
+        $branchScope,
+        $idempotency,
+    ]);
     $router->post('/api/v1/shipments', [$controller, 'create'], [
         $auth,
         new PermissionMiddleware($pdo, 'shipment.create'),

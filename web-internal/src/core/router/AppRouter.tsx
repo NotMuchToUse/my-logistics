@@ -70,7 +70,7 @@ export function AppRouter() {
           <Route path="pickup-dispatch" element={<PickupDispatchPage />} />
           <Route path="shipment-create" element={<ShipmentCreatePage />} />
           <Route path="shipment-list" element={<ShipmentListPage />} />
-          <Route path="shipment-detail" element={<ShipmentDetailPage />} />
+          <Route path="shipment-detail/:publicId?" element={<ShipmentDetailPage />} />
           <Route
             path="shipment-bulk-import"
             element={<ShipmentBulkImportPage />}
