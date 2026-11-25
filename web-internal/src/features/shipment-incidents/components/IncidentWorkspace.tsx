@@ -8,6 +8,7 @@ import { EmptyState } from '@/components/shared/EmptyState';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { FIELD_CLASS, INCIDENT_TYPES, SEVERITIES, STATUSES, SEVERITY_LABELS, STATUS_LABELS, TYPE_LABELS } from '../constants/shipmentIncidents.constants.ts';
 import { createEvidenceRegistry } from '../utils/evidence.ts';
+import { clearPendingIncidentOperation } from '../hooks/useIncidentMutation';
 import { useShipmentIncidents } from '../hooks/useShipmentIncidents';
 import type { IncidentService, IncidentSession } from '../types/shipmentIncidents.types.ts';
 import { CreateIncidentDialog } from './CreateIncidentDialog';
@@ -21,7 +22,7 @@ export function IncidentWorkspace({ service, session }: { service: IncidentServi
   const [creating, setCreating] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
   const [registry] = useState(createEvidenceRegistry);
-  useEffect(() => () => registry.dispose(), [registry]);
+  useEffect(() => () => { clearPendingIncidentOperation(session.key, 'create'); registry.dispose(); }, [registry, session.key]);
   const saved = () => { toast.success('Đã cập nhật hồ sơ mô phỏng.'); list.refetch(); };
   return <section className="min-w-0 space-y-6"><header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"><div><h1 className="text-xl font-semibold tracking-tight sm:text-2xl">Báo cáo & Xử lý sự cố vận đơn</h1><p className="text-sm text-muted-foreground">Theo dõi hồ sơ và chứng từ trong phạm vi được cấp.</p></div><div className="flex flex-wrap gap-2"><Button variant="outline" onClick={list.refetch} disabled={list.loading}><RefreshCw className="mr-2 h-4 w-4" />Làm mới</Button><Button disabled={!session.capabilities.create || list.loading || !!list.error} onClick={() => setCreating(true)}><Plus className="mr-2 h-4 w-4" />Tạo báo cáo sự cố</Button></div></header>
     <p className="rounded-md border bg-muted p-3 text-sm">Chế độ Mock — dữ liệu và ảnh chỉ tồn tại trong phiên. Quyền tạo, gán và chuyển đề xuất thật đang chờ xác nhận.</p>

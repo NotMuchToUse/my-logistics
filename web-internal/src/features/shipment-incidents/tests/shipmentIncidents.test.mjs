@@ -40,6 +40,32 @@ test('list searches incident and tracking codes and combines filters', async () 
   assert.ok(result.data.length); assert.ok(result.data.every(row => row.incident_type === 'lost' && row.severity === 'medium' && row.status === 'investigating'));
   assert.equal((await api.list(session(), { ...DEFAULT_FILTERS, search: 'missing' })).meta.pagination.total_pages, 0);
 });
+test('every list enum value and responsibility filter returns only matching records', async () => {
+  const api = mock();
+  for (const value of INCIDENT_TYPES) {
+    const result = await api.list(session(), { ...DEFAULT_FILTERS, incident_type: value });
+    assert.ok(result.data.every(row => row.incident_type === value));
+  }
+  for (const value of SEVERITIES) {
+    const result = await api.list(session(), { ...DEFAULT_FILTERS, severity: value });
+    assert.ok(result.data.every(row => row.severity === value));
+  }
+  for (const value of STATUSES) {
+    const result = await api.list(session(), { ...DEFAULT_FILTERS, status: value });
+    assert.ok(result.data.every(row => row.status === value));
+  }
+  const assigned = await api.list(session(), { ...DEFAULT_FILTERS, responsible_user_id: '22' });
+  assert.ok(assigned.data.length > 0 && assigned.data.every(row => row.responsible_user_id === '22'));
+  const missingAssignee = await api.list(session(), { ...DEFAULT_FILTERS, responsible_user_id: '21' });
+  assert.ok(missingAssignee.data.every(row => row.responsible_user_id === '21'));
+});
+test('pagination rejects unsafe page sizes and ids remain opaque strings', async () => {
+  for (const filters of [{ page: 0 }, { page: -1 }, { per_page: 0 }, { per_page: 101 }, { incident_type: 'unknown' }, { severity: 'urgent' }, { status: 'pending' }, { responsible_user_id: '1.5' }]) {
+    await rejects(mock().list(session(), { ...DEFAULT_FILTERS, ...filters }), '422_VALIDATION_ERROR');
+  }
+  const largeId = incidentSchema.parse({ ...seed[0], shipment_id: '18446744073709551615' });
+  assert.equal(largeId.shipment_id, '18446744073709551615');
+});
 test('unauthorized, missing permission and unsupported or ungranted scopes fail closed', async () => {
   const api = mock();
   await rejects(api.list(session({ authenticated: false }), DEFAULT_FILTERS), '401_UNAUTHORIZED');
@@ -53,6 +79,21 @@ test('lookups only expose eligible staff and shipments in selected scope', async
   assert.deepEqual(result.staff.map(s => s.id), ['21', '22']);
   assert.deepEqual(result.shipments.map(s => s.id), ['10', '11']);
 });
+test('read, create, assign and handoff require independent capabilities and authentication', async () => {
+  const id = seed[0].public_id;
+  for (const capabilities of [
+    { read: false, create: true, assign: true, handoff: true },
+    { read: true, create: false, assign: true, handoff: true },
+    { read: true, create: true, assign: false, handoff: true },
+    { read: true, create: true, assign: true, handoff: false },
+  ]) {
+    const api = mock(); const user = session({ capabilities });
+    if (!capabilities.read) await rejects(api.list(user, DEFAULT_FILTERS), '403_FORBIDDEN');
+    if (!capabilities.create) await rejects(api.create(user, payload(), key()), '403_FORBIDDEN');
+    if (!capabilities.assign) await rejects(api.assign(user, id, { responsible_user_id: '22', resolution_note: '', version: 1 }, key()), '403_FORBIDDEN');
+    if (!capabilities.handoff) await rejects(api.handoff(user, id, 1, key()), '403_FORBIDDEN');
+  }
+});
 for (const type of ['damaged', 'lost', 'wet_contaminated']) test(`creates ${type}, trims description and leaves responsibility unassigned`, async () => {
   const api = mock(); const created = (await api.create(session(), payload({ incident_type: type }), key())).data;
   assert.equal(created.description, 'Kiện hàng bị hỏng'); assert.equal(created.status, 'open'); assert.equal(created.version, 1);
@@ -63,6 +104,12 @@ test('create rejects whitespace, missing/out-of-scope shipment, response fields 
   const api = mock();
   for (const input of [{ description: '   ' }, { shipment_id: '' }, { shipment_id: '12' }, { incident_type: 'other' }, { severity: 'urgent' }, { reported_by: '999' }, { branch_id: '4' }]) await rejects(api.create(session(), payload(input), key()), '422_VALIDATION_ERROR');
   assert.equal(createIncidentSchema.parse(payload()).severity, 'medium');
+});
+test('create schema is strict, trims descriptions, accepts nullable evidence only as an array payload', () => {
+  assert.equal(createIncidentSchema.parse(payload({ description: '  valid  ' })).description, 'valid');
+  for (const value of [null, 'https://example.test/photo.jpg']) assert.equal(createIncidentSchema.safeParse(payload({ evidence_urls: value })).success, false);
+  assert.equal(createIncidentSchema.safeParse(payload({ unexpected: true })).success, false);
+  for (const severity of SEVERITIES) assert.equal(createIncidentSchema.parse(payload({ severity })).severity, severity);
 });
 test('evidence payload rejects blobs, base64 and dangerous protocols', async () => {
   for (const url of ['blob:abc', 'data:image/png;base64,abc', 'javascript:alert(1)', 'https://user:password@example.test/a']) await rejects(mock().create(session(), payload({ evidence_urls: [url] }), key()), '422_VALIDATION_ERROR');
@@ -76,6 +123,13 @@ test('create replay is deduplicated and changed payload with same UUID is reject
   await rejects(api.create(session(), payload({ description: 'changed' }), uuid), '409_IDEMPOTENCY_DUPLICATE');
   await rejects(api.create(session(), payload(), 'bad-key'), '400_BAD_REQUEST');
 });
+test('same idempotency key is isolated per authenticated session', async () => {
+  const api = mock(); const uuid = key();
+  const one = await api.create(session({ key: 'user-a' }), payload(), uuid);
+  const two = await api.create(session({ key: 'user-b' }), payload({ description: 'second user' }), uuid);
+  assert.notEqual(one.data.public_id, two.data.public_id);
+  assert.equal((await api.list(session(), DEFAULT_FILTERS)).meta.pagination.total, 26);
+});
 test('assignment increments version without changing reporter or handler; allows mock unassignment', async () => {
   const api = mock(); const row = seed[0];
   const assigned = (await api.assign(session(), row.public_id, { responsible_user_id: '22', resolution_note: 'Kiểm tra bàn giao', version: 1 }, key())).data;
@@ -88,6 +142,17 @@ test('assignment rejects customer, inactive/outside staff, read-only state and p
   for (const id of ['23', '24', '25', '999']) await rejects(api.assign(session(), seed[0].public_id, { responsible_user_id: id, resolution_note: '', version: 1 }, key()), '422_VALIDATION_ERROR');
   for (const row of seed.filter(r => r.branch_id === '3' && ['closed', 'resolved', 'compensation_requested'].includes(r.status))) await rejects(api.assign(session(), row.public_id, { responsible_user_id: '22', resolution_note: '', version: 1 }, key()), '422_VALIDATION_ERROR');
   await rejects(api.assign(session({ capabilities: { read: true, assign: false } }), seed[0].public_id, { responsible_user_id: '22', resolution_note: '', version: 1 }, key()), '403_FORBIDDEN');
+});
+test('assignment validates ULID, nullable assignee and positive integer version; blocks hidden records', async () => {
+  const api = mock();
+  for (const input of [
+    { responsible_user_id: '22', resolution_note: '', version: 0 },
+    { responsible_user_id: '22', resolution_note: '', version: 1.5 },
+    { responsible_user_id: '18446744073709551616', resolution_note: '', version: 1 },
+    { responsible_user_id: null, resolution_note: '', version: 1, reported_by: '21' },
+  ]) await rejects(api.assign(session(), seed[0].public_id, input, key()), '422_VALIDATION_ERROR');
+  await rejects(api.assign(session(), seed[24].public_id, { responsible_user_id: '22', resolution_note: '', version: 1 }, key()), '404_NOT_FOUND');
+  await rejects(api.assign(session({ authenticated: false }), seed[0].public_id, { responsible_user_id: '22', resolution_note: '', version: 1 }, key()), '401_UNAUTHORIZED');
 });
 test('concurrent assignment rejects stale version without overwrite', async () => {
   const api = mock(); const id = seed[0].public_id;
@@ -103,6 +168,16 @@ test('handoff permits unassigned records, is idempotent and rejects terminal/for
   await rejects(api.handoff(session(), id, 2, key()), '422_VALIDATION_ERROR');
   await rejects(api.handoff(session({ capabilities: { read: true, handoff: false } }), seed[1].public_id, 1, key()), '403_FORBIDDEN');
 });
+test('handoff validates key, version, scope and status, with branch-isolated replay', async () => {
+  const api = mock(); const row = seed.find(item => item.branch_id === '4' && item.status === 'open');
+  await rejects(api.handoff(session({ key: 'branch3' }), row.public_id, 1, key()), '404_NOT_FOUND');
+  await rejects(api.handoff(session({ key: 'branch4', branchId: '4', scopeType: 'post_office' }), row.public_id, 0, key()), '422_VALIDATION_ERROR');
+  await rejects(api.handoff(session({ key: 'branch4', branchId: '4', scopeType: 'post_office' }), row.public_id, 1, 'invalid'), '400_BAD_REQUEST');
+  const uuid = key(); const branch4 = session({ key: 'branch4', branchId: '4', scopeType: 'post_office' });
+  const result = await api.handoff(branch4, row.public_id, 1, uuid);
+  await rejects(api.handoff(branch4, row.public_id, 2, uuid), '409_IDEMPOTENCY_DUPLICATE');
+  assert.equal(result.data.version, 2);
+});
 test('API mode blocks every operation and never invokes mock', async () => {
   let calls = 0; const api = selectIncidentService(false, new Proxy({}, { get: () => () => { calls++; } }));
   for (const method of ['list', 'detail', 'options', 'create', 'assign', 'handoff']) await rejects(api[method](), 'API_CONTRACT_BLOCKED');
@@ -116,6 +191,12 @@ test('ambiguous timeout keeps exact payload and key; retry avoids duplicate crea
   await operation.run(payload({ description: 'ignored during retry' }), true);
   assert.deepEqual(calls[0], calls[1]); assert.equal(operation.pending, false);
   assert.equal((await api.list(session(), DEFAULT_FILTERS)).meta.pagination.total, 25);
+});
+test('ambiguous timeout cannot be silently abandoned for a new mutation', async () => {
+  const operation = createPendingOperation(async () => { throw new Error('network'); }, () => 'session-1');
+  await rejects(operation.run(payload()), 'OUTCOME_UNKNOWN');
+  await rejects(operation.run(payload({ description: 'new logical operation' })), 'OUTCOME_UNKNOWN');
+  assert.equal(operation.pending, true);
 });
 test('double submit is synchronously blocked and old context response cannot succeed', async () => {
   let finish; let scope = '3';
@@ -145,4 +226,12 @@ test('error adapter retains field errors but hides raw server details', () => {
     const error = incidentError({ success: false, error: { code, message: 'SQL SELECT secret', details: { description: ['Required'] } } });
     assert.equal(error.code, code); assert.ok(!error.message.includes('SQL')); assert.deepEqual(error.details.description, ['Required']);
   }
+});
+test('error adapter safely normalizes malformed envelopes and ordinary network failures', () => {
+  for (const error of [null, undefined, 'network', { error: null }, { error: { code: 77, details: 'private' } }, { error: { code: '422_VALIDATION_ERROR', message: 'x', details: { description: ['valid', 2] } } }]) {
+    const normalized = incidentError(error);
+    assert.equal(typeof normalized.message, 'string'); assert.ok(normalized.message.length > 0);
+    assert.ok(!normalized.message.includes('SQL'));
+  }
+  assert.equal(incidentError(new Error('offline')).code, 'OUTCOME_UNKNOWN');
 });

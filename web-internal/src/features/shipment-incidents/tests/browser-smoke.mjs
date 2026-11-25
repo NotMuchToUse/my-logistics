@@ -10,7 +10,7 @@ const server = await createServer({ server: { host: '127.0.0.1', port: 5189, str
 await server.listen();
 console.log('Vite ready');
 const profile = await mkdtemp(join(tmpdir(), 'kha34-chrome-'));
-const chrome = spawn(process.env.CHROME_PATH || 'C:/Program Files/Google/Chrome/Application/chrome.exe', ['--headless=new', '--disable-gpu', '--no-first-run', '--no-default-browser-check', '--remote-debugging-port=0', `--user-data-dir=${profile}`, 'about:blank'], { windowsHide: true, stdio: ['ignore', 'ignore', 'pipe'] });
+const chrome = spawn(process.env.CHROME_PATH || 'C:/Program Files/Google/Chrome/Application/chrome.exe', ['--headless=new', '--disable-gpu', '--disable-software-rasterizer', '--no-sandbox', '--no-first-run', '--no-default-browser-check', '--remote-debugging-port=0', `--user-data-dir=${profile}`, 'about:blank'], { windowsHide: true, stdio: ['ignore', 'ignore', 'pipe'] });
 chrome.stderr.on('data', data => console.log(String(data).trim()));
 chrome.on('exit', code => console.log('Chrome exited', code));
 let socket;
@@ -54,11 +54,12 @@ try {
   await click('Test 422'); await click('Tạo báo cáo sự cố'); await fill('shipment-id', '10'); await fill('incident-description', 'Báo cáo từ browser'); await click('Lưu báo cáo');
   await until(bodyHas('Mô tả cần xác minh (Mock)'), '422 field error'); assert.equal(await evaluate('document.getElementById("incident-description").value'), 'Báo cáo từ browser');
   await click('Hủy'); checks.push('422 maps into form and preserves description');
-  await click('Test timeout'); await click('Tạo báo cáo sự cố'); await fill('shipment-id', '10'); await fill('incident-description', '<script>alert(1)</script> Chứng từ browser');
+  await click('Test network create'); await click('Tạo báo cáo sự cố'); await fill('shipment-id', '10'); await fill('incident-description', '<script>alert(1)</script> Chứng từ browser');
   await evaluate(`(() => { const canvas = document.createElement('canvas'); canvas.width = canvas.height = 10; const ctx = canvas.getContext('2d'); ctx.fillStyle = '#64748b'; ctx.fillRect(0, 0, 10, 10); return new Promise(resolve => canvas.toBlob(blob => { const dt = new DataTransfer(); dt.items.add(new File([blob], 'evidence.png', { type: 'image/png' })); dt.items.add(new File(['bad'], 'bad.php.png', { type: 'image/png' })); const input = document.getElementById('incident-evidence'); input.files = dt.files; input.dispatchEvent(new Event('change', { bubbles: true })); resolve(); }, 'image/png')); })()`);
   await until('document.querySelector("[role=dialog] img")?.complete', 'image preview'); await until(bodyHas('Tên file hoặc phần mở rộng không an toàn'), 'file rejection');
-  await click('Lưu báo cáo'); await until(bodyHas('Thử lại lượt gửi'), 'timeout retry');
-  assert.equal(await evaluate('document.getElementById("incident-description").disabled || document.getElementById("incident-description").closest("fieldset").disabled'), true);
+  await click('Lưu báo cáo'); await until(bodyHas('Thử lại lượt gửi'), 'network retry');
+  await click('Hủy'); await until('!document.querySelector("[role=dialog]")', 'close ambiguous create');
+  await click('Tạo báo cáo sự cố'); await until(bodyHas('Thử lại lượt gửi'), 'pending create survives dialog remount');
   await click('Thử lại lượt gửi'); await until('!document.querySelector("[role=dialog]")', 'replay success'); await until(bodyHas('25 hồ sơ'), 'deduplicated count');
   await evaluate('document.querySelector("tbody tr button").click()'); await until(bodyHas('Chi tiết sự cố'), 'detail'); await until('document.querySelector("[role=dialog] img")?.complete', 'saved evidence preview');
   assert.equal(await evaluate('document.querySelector("[role=dialog]").innerText.includes("<script>alert(1)</script>")'), true);

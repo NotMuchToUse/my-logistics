@@ -51,7 +51,7 @@ function AssignmentDialog({ row, service, session, options, onClose, onSaved, on
   const form = useForm<Assignment>({ resolver: zodResolver(assignmentSchema), defaultValues: { responsible_user_id: row.responsible_user_id, resolution_note: row.resolution_note ?? '', version: row.version } });
   const responsibleId = useWatch({ control: form.control, name: 'responsible_user_id' });
   const [query, setQuery] = useState('');
-  const mutation = useIncidentMutation((data: Assignment, key) => service.assign(session, row.public_id, data, key), session.key, onSaved);
+  const mutation = useIncidentMutation((data: Assignment, key) => service.assign(session, row.public_id, data, key), session.key, onSaved, `assign:${row.public_id}`);
   const conflict = mutation.error?.code === '409_VERSION_CONFLICT';
   const locked = mutation.busy || mutation.uncertain || conflict;
   useEffect(() => {
@@ -61,7 +61,7 @@ function AssignmentDialog({ row, service, session, options, onClose, onSaved, on
 }
 
 function HandoffDialog({ row, service, session, onClose, onSaved, onReload }: Props & { row: Incident; onReload: () => void }) {
-  const mutation = useIncidentMutation((version: number, key) => service.handoff(session, row.public_id, version, key), session.key, onSaved);
+  const mutation = useIncidentMutation((version: number, key) => service.handoff(session, row.public_id, version, key), session.key, onSaved, `handoff:${row.public_id}`);
   const conflict = mutation.error?.code === '409_VERSION_CONFLICT';
   const locked = mutation.busy || mutation.uncertain;
   return <Dialog open onOpenChange={open => { if (!open && !locked) onClose(); }}><DialogContent showCloseButton={!locked}><DialogTitle>Xác nhận chuyển đề xuất đền bù</DialogTitle><DialogDescription>Chuyển hồ sơ {row.incident_code} sang bước đề xuất đền bù?</DialogDescription><p className="text-sm">Mô phỏng chuyển tiếp. Chưa tạo hồ sơ tài chính, chưa phê duyệt hoặc ghi nhận chi phí. Tích hợp thực tế chờ KHA-35/KHA-49.</p>{mutation.error && <p role="alert">{mutation.error.message}</p>}<DialogFooter><Button variant="outline" disabled={locked} onClick={onClose}>Hủy</Button>{conflict ? <Button onClick={onReload}>Tải lại hồ sơ</Button> : <Button disabled={mutation.busy} onClick={() => mutation.submit(row.version, mutation.uncertain)}>{mutation.uncertain ? 'Thử lại lượt gửi' : 'Xác nhận chuyển (Mock)'}</Button>}</DialogFooter></DialogContent></Dialog>;
