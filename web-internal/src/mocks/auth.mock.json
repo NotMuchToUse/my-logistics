@@ -65,7 +65,8 @@
       ],
       "permissions": [
         "*",
-        "system.manage_settings"
+        "system.manage_settings",
+        "compensation.read"
       ],
       "branch_scopes": [
         {
