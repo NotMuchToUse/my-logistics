@@ -1,17 +1,21 @@
 import axiosClient, { USE_MOCK } from "@/core/api/axiosClient";
-import authMock from "@/mocks/auth.mock.json";
+import { useAuthStore } from "@/core/stores/useAuthStore";
 import { MOCK_LOGIN_CREDENTIALS } from "@/features/auth/constants/auth.constants";
 import type {
-  ChangePasswordCredentials,
-  ChangePasswordResponse,
   AuthLoginResponse,
   AuthMeResponse,
+  ChangePasswordCredentials,
+  ChangePasswordResponse,
   LoginCredentials,
 } from "@/features/auth/types/auth.types";
+import authMock from "@/mocks/auth.mock.json";
 import type { ApiSuccessResponse } from "@/types/api.types";
 import type { ScopeType, UserBranchScope } from "@/types/rbac.types";
 
-const mockLoginData = authMock.success_response.data;
+const mockAccounts = [
+  authMock.success_response.data,
+  authMock.admin_response.data,
+];
 
 function getScopeType(scopeType: string): ScopeType {
   switch (scopeType) {
@@ -32,13 +36,14 @@ export async function loginApi(
   if (USE_MOCK) {
     await new Promise((resolve) => window.setTimeout(resolve, 200));
     const identifier = credentials.identifier.trim().toLowerCase();
-    const isKnownIdentifier = [
-      mockLoginData.user.email,
-      mockLoginData.user.employee_code,
-    ].some((value) => value.toLowerCase() === identifier);
+    const matchedAccount = mockAccounts.find((account) =>
+      [account.user.email, account.user.employee_code].some(
+        (value) => value.toLowerCase() === identifier,
+      ),
+    );
 
     if (
-      !isKnownIdentifier ||
+      !matchedAccount ||
       credentials.password !== MOCK_LOGIN_CREDENTIALS.password
     ) {
       throw new Error("Thông tin đăng nhập không chính xác.");
@@ -48,17 +53,17 @@ export async function loginApi(
       success: true,
       message: authMock.success_response.message,
       data: {
-        access_token: mockLoginData.access_token,
+        access_token: matchedAccount.access_token,
         token_type: "Bearer",
-        expires_at: mockLoginData.expires_at,
+        expires_at: matchedAccount.expires_at,
         user: {
-          ...mockLoginData.user,
+          ...matchedAccount.user,
           user_type: "staff",
           must_change_password: 0,
         },
-        roles: mockLoginData.roles,
-        permissions: mockLoginData.permissions,
-        branch_scopes: mockLoginData.branch_scopes.map(
+        roles: matchedAccount.roles,
+        permissions: matchedAccount.permissions,
+        branch_scopes: matchedAccount.branch_scopes.map(
           (scope): UserBranchScope => ({
             ...scope,
             scope_type: getScopeType(scope.scope_type),
@@ -80,19 +85,24 @@ export async function loginApi(
 export async function getCurrentSessionApi(): Promise<AuthMeResponse> {
   if (USE_MOCK) {
     await new Promise((resolve) => window.setTimeout(resolve, 200));
+    const currentEmail = useAuthStore.getState().user?.email?.toLowerCase();
+    const matchedAccount =
+      mockAccounts.find(
+        (account) => account.user.email.toLowerCase() === currentEmail,
+      ) ?? authMock.success_response.data;
 
     return {
       success: true,
       message: "Lấy thông tin phiên thành công.",
       data: {
         user: {
-          ...mockLoginData.user,
+          ...matchedAccount.user,
           user_type: "staff",
           must_change_password: 0,
         },
-        roles: mockLoginData.roles,
-        permissions: mockLoginData.permissions,
-        branch_scopes: mockLoginData.branch_scopes.map(
+        roles: matchedAccount.roles,
+        permissions: matchedAccount.permissions,
+        branch_scopes: matchedAccount.branch_scopes.map(
           (scope): UserBranchScope => ({
             ...scope,
             scope_type: getScopeType(scope.scope_type),

@@ -7,14 +7,38 @@ namespace App\Middleware;
 use App\Core\ApiException;
 use App\Core\Request;
 use App\Core\Response;
+use InvalidArgumentException;
 use PDO;
 
 final class PermissionMiddleware implements MiddlewareInterface
 {
+    /**
+     * @var list<string>
+     */
+    private readonly array $requiredPermissions;
+
+    private readonly string $mode;
+
     public function __construct(
-        private readonly PDO $pdo,
-        private readonly string $permissionCode,
+        PDO $pdo,
+        string|array $requiredPermissions,
+        string $mode = 'ALL',
     ) {
+        $permissions = is_string($requiredPermissions) ? [$requiredPermissions] : $requiredPermissions;
+        $permissions = array_values(array_unique(array_filter(
+            array_map(
+                static fn (mixed $permission): string => is_string($permission) ? trim($permission) : '',
+                $permissions,
+            ),
+            static fn (string $permission): bool => $permission !== '',
+        )));
+        $normalizedMode = strtoupper(trim($mode));
+        if ($permissions === [] || !in_array($normalizedMode, ['ALL', 'ANY'], true)) {
+            throw new InvalidArgumentException('Permission middleware requires codes and an ALL or ANY mode.');
+        }
+
+        $this->requiredPermissions = $permissions;
+        $this->mode = $normalizedMode;
     }
 
     public function process(Request $request, callable $next): Response
@@ -24,26 +48,26 @@ final class PermissionMiddleware implements MiddlewareInterface
             throw new ApiException('401_UNAUTHORIZED', 'Cần đăng nhập để kiểm tra quyền truy cập.');
         }
 
-        if ($this->permissionCode === '') {
-            throw new ApiException('500_INTERNAL_ERROR', 'Mã quyền của route chưa được cấu hình.');
+        $roles = $auth['roles'] ?? null;
+        $permissions = $auth['permissions'] ?? null;
+        if (!is_array($roles) || !is_array($permissions)) {
+            throw new ApiException('500_INTERNAL_ERROR', 'AuthContext thiếu vai trò hoặc quyền hạn.');
         }
 
-        $statement = $this->pdo->prepare(
-            'SELECT 1
-             FROM user_has_roles uhr
-             INNER JOIN role_has_permissions rhp ON rhp.role_id = uhr.role_id
-             INNER JOIN permissions p ON p.id = rhp.permission_id
-             WHERE uhr.user_id = :user_id
-               AND p.code = :permission_code
-             LIMIT 1'
-        );
-        $statement->execute([
-            ':user_id' => (int) $auth['user_id'],
-            ':permission_code' => $this->permissionCode,
-        ]);
+        if (array_intersect(['system_admin', 'system_dev'], $roles) !== []) {
+            return $next($request);
+        }
 
-        if ($statement->fetchColumn() === false) {
-            throw new ApiException('403_FORBIDDEN', 'Bạn không có quyền thực hiện thao tác này.');
+        $hasPermission = $this->mode === 'ALL'
+            ? array_diff($this->requiredPermissions, $permissions) === []
+            : array_intersect($this->requiredPermissions, $permissions) !== [];
+        if (!$hasPermission) {
+            throw new ApiException(
+                '403_FORBIDDEN',
+                'Bạn không có quyền thực hiện chức năng này',
+                ['required_permissions' => $this->requiredPermissions],
+                403,
+            );
         }
 
         return $next($request);

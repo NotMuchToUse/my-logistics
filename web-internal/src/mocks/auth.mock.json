@@ -5,7 +5,7 @@
     "data": {
       "access_token": "mock-internal-access-token",
       "token_type": "Bearer",
-      "expires_at": "2026-11-24T09:30:00+07:00",
+      "expires_at": "2026-11-26T09:30:00+07:00",
       "user": {
         "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6V8",
         "full_name": "Nguyễn Minh An",
@@ -44,6 +44,63 @@
       "timestamp": "2026-11-23T09:30:00+07:00"
     }
   },
+  "admin_response": {
+    "success": true,
+    "message": "Đăng nhập thành công",
+    "data": {
+      "access_token": "mock-internal-admin-token",
+      "token_type": "Bearer",
+      "expires_at": "2026-11-26T09:30:00+07:00",
+      "user": {
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6V9",
+        "full_name": "Trần Quốc Bảo",
+        "email": "admin@vietstar.test",
+        "employee_code": "VST0000",
+        "phone_masked": "091***8888",
+        "user_type": "staff",
+        "must_change_password": 0
+      },
+      "roles": [
+        "system_admin"
+      ],
+      "permissions": [
+        "*",
+        "system.manage_settings"
+      ],
+      "branch_scopes": [
+        {
+          "scope_type": "hq_all",
+          "branch_id": 1,
+          "warehouse_id": null,
+          "is_primary": true,
+          "branch_public_id": "01JDC9X8K2M4N6P8Q0R2S4T6W1",
+          "branch_code": "HQ-HCM",
+          "branch_name": "Tổng công ty TP.HCM"
+        },
+        {
+          "scope_type": "branch",
+          "branch_id": 3,
+          "warehouse_id": null,
+          "is_primary": false,
+          "branch_public_id": "01JDC9X8K2M4N6P8Q0R2S4T6W2",
+          "branch_code": "VS-DNG",
+          "branch_name": "Chi nhánh Đà Nẵng"
+        },
+        {
+          "scope_type": "post_office",
+          "branch_id": 4,
+          "warehouse_id": null,
+          "is_primary": false,
+          "branch_public_id": "01JDC9X8K2M4N6P8Q0R2S4T6W3",
+          "branch_code": "VS-DNG-SONTRA",
+          "branch_name": "Bưu cục Sơn Trà"
+        }
+      ]
+    },
+    "meta": {
+      "timestamp": "2026-11-23T09:30:00+07:00"
+    }
+  },
   "pagination_response": {
     "success": true,
     "message": "Lấy danh sách người dùng thành công",
@@ -55,13 +112,21 @@
         "employee_code": "VST0001",
         "user_type": "staff",
         "must_change_password": 0
+      },
+      {
+        "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6V9",
+        "full_name": "Trần Quốc Bảo",
+        "email": "admin@vietstar.test",
+        "employee_code": "VST0000",
+        "user_type": "staff",
+        "must_change_password": 0
       }
     ],
     "meta": {
       "pagination": {
         "page": 1,
         "per_page": 20,
-        "total": 1,
+        "total": 2,
         "total_pages": 1
       },
       "timestamp": "2026-11-23T09:30:00+07:00"
