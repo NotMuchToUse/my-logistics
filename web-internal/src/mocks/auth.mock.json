@@ -18,7 +18,7 @@
       "roles": [
         "receptionist"
       ],
-      "permissions": [],
+      "permissions": ["compensation.read"],
       "branch_scopes": [
         {
           "scope_type": "branch",
