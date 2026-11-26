@@ -39,6 +39,12 @@ export function WarehouseBagsPage() {
     hasToken: Boolean(token),
   });
   if (demoMode) return <WarehouseBagsDemoPage />;
+  const demoChecks = [
+    ["Chạy bằng npm run dev", import.meta.env.DEV === true],
+    ["VITE_USE_MOCK=true", USE_MOCK],
+    ["VITE_WAREHOUSE_BAGS_DEMO=true", import.meta.env.VITE_WAREHOUSE_BAGS_DEMO === "true"],
+    ["Đã đăng nhập", isAuthenticated && Boolean(token)],
+  ] as const;
   return (
     <section className="min-w-0 space-y-4">
       <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">Đóng túi &amp; Mở túi hàng</h1>
@@ -46,6 +52,11 @@ export function WarehouseBagsPage() {
         <ShieldAlert className="h-5 w-5 shrink-0" aria-hidden="true" />
         <div className="space-y-2"><p className="font-semibold">BLOCKED — Chưa xác nhận quyền truy cập trang.</p><p>Quyền đọc và phạm vi kho chưa được xác nhận. Vui lòng liên hệ người phụ trách để được mở truy cập.</p><p className="text-muted-foreground">Chức năng tạo, thêm vận đơn, niêm phong và mở túi đang khóa.</p></div>
       </div>
+      {import.meta.env.DEV && <div className="rounded-md border p-4 text-sm space-y-2">
+        <p className="font-semibold">Điều kiện mở giao diện Demo</p>
+        <ul>{demoChecks.map(([label, passed]) => <li key={label}>{passed ? "Đạt" : "Chưa đạt"}: {label}</li>)}</ul>
+        <p>Bổ sung các cờ còn thiếu vào web-internal/.env.local, dừng rồi chạy lại npm run dev và tải lại trang.</p>
+      </div>}
     </section>
   );
 }
