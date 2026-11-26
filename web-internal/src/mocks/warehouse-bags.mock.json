@@ -1,0 +1,368 @@
+{
+  "success_response": {
+    "success": true,
+    "message": "Fixture UI tĩnh KHA-38, không phải DTO API; chưa có dữ liệu trọng lượng.",
+    "data": {
+      "warehouses": [
+        {
+          "id": 101,
+          "public_id": "01KAV000000000000000000101",
+          "name": "Kho mẫu A"
+        },
+        {
+          "id": 102,
+          "public_id": "01KAV000000000000000000102",
+          "name": "Kho mẫu B"
+        }
+      ],
+      "manifest_bags": [
+        {
+          "id": 201,
+          "public_id": "01KAV000000000000000000201",
+          "bag_code": "UI-BAG-001",
+          "seal_number": "000-SEAL/1",
+          "origin_warehouse_id": 101,
+          "destination_warehouse_id": 102,
+          "status": "open",
+          "shipment_count": 1,
+          "version": 1
+        },
+        {
+          "id": 202,
+          "public_id": "01KAV000000000000000000202",
+          "bag_code": "UI-BAG-002",
+          "seal_number": "000-SEAL/2",
+          "origin_warehouse_id": 101,
+          "destination_warehouse_id": 102,
+          "status": "sealed",
+          "shipment_count": 1,
+          "version": 1
+        },
+        {
+          "id": 203,
+          "public_id": "01KAV000000000000000000203",
+          "bag_code": "UI-BAG-003",
+          "seal_number": "000-SEAL/3",
+          "origin_warehouse_id": 101,
+          "destination_warehouse_id": 102,
+          "status": "in_transit",
+          "shipment_count": 1,
+          "version": 1
+        },
+        {
+          "id": 204,
+          "public_id": "01KAV000000000000000000204",
+          "bag_code": "UI-BAG-004",
+          "seal_number": "000-SEAL/4",
+          "origin_warehouse_id": 101,
+          "destination_warehouse_id": 102,
+          "status": "opened",
+          "shipment_count": 1,
+          "version": 1
+        },
+        {
+          "id": 205,
+          "public_id": "01KAV000000000000000000205",
+          "bag_code": "UI-BAG-005",
+          "seal_number": "000-SEAL/5",
+          "origin_warehouse_id": 101,
+          "destination_warehouse_id": 102,
+          "status": "cancelled",
+          "shipment_count": 0,
+          "version": 1
+        }
+      ],
+      "shipments": [
+        {
+          "id": 301,
+          "public_id": "01KAV000000000000000000301",
+          "tracking_code": "UI-VS-0001",
+          "status": "in_warehouse",
+          "current_warehouse_id": 101
+        },
+        {
+          "id": 302,
+          "public_id": "01KAV000000000000000000302",
+          "tracking_code": "UI-VS-0002",
+          "status": "bagged",
+          "current_warehouse_id": 101
+        },
+        {
+          "id": 303,
+          "public_id": "01KAV000000000000000000303",
+          "tracking_code": "UI-VS-0003",
+          "status": "in_transit",
+          "current_warehouse_id": null
+        },
+        {
+          "id": 304,
+          "public_id": "01KAV000000000000000000304",
+          "tracking_code": "UI-VS-0004",
+          "status": "in_warehouse",
+          "current_warehouse_id": 102
+        }
+      ],
+      "manifest_bag_items": [
+        {
+          "id": 401,
+          "bag_id": 201,
+          "shipment_id": 301,
+          "scanned_in_by": 901,
+          "scanned_in_at": "2026-11-26 08:00:00",
+          "unpacked_by": null,
+          "unpacked_at": null
+        },
+        {
+          "id": 402,
+          "bag_id": 202,
+          "shipment_id": 302,
+          "scanned_in_by": 901,
+          "scanned_in_at": "2026-11-26 08:00:00",
+          "unpacked_by": null,
+          "unpacked_at": null
+        },
+        {
+          "id": 403,
+          "bag_id": 203,
+          "shipment_id": 303,
+          "scanned_in_by": 901,
+          "scanned_in_at": "2026-11-26 08:00:00",
+          "unpacked_by": null,
+          "unpacked_at": null
+        },
+        {
+          "id": 404,
+          "bag_id": 204,
+          "shipment_id": 304,
+          "scanned_in_by": 901,
+          "scanned_in_at": "2026-11-26 08:00:00",
+          "unpacked_by": 901,
+          "unpacked_at": "2026-11-26 09:00:00"
+        }
+      ]
+    },
+    "meta": {
+      "timestamp": "2026-11-26T09:00:00+07:00"
+    }
+  },
+  "pagination_response": {
+    "success": true,
+    "message": "Fixture danh sách túi.",
+    "data": [
+      {
+        "id": 201,
+        "public_id": "01KAV000000000000000000201",
+        "bag_code": "UI-BAG-001",
+        "seal_number": "000-SEAL/1",
+        "origin_warehouse_id": 101,
+        "destination_warehouse_id": 102,
+        "status": "open",
+        "shipment_count": 1,
+        "version": 1
+      },
+      {
+        "id": 202,
+        "public_id": "01KAV000000000000000000202",
+        "bag_code": "UI-BAG-002",
+        "seal_number": "000-SEAL/2",
+        "origin_warehouse_id": 101,
+        "destination_warehouse_id": 102,
+        "status": "sealed",
+        "shipment_count": 1,
+        "version": 1
+      },
+      {
+        "id": 203,
+        "public_id": "01KAV000000000000000000203",
+        "bag_code": "UI-BAG-003",
+        "seal_number": "000-SEAL/3",
+        "origin_warehouse_id": 101,
+        "destination_warehouse_id": 102,
+        "status": "in_transit",
+        "shipment_count": 1,
+        "version": 1
+      },
+      {
+        "id": 204,
+        "public_id": "01KAV000000000000000000204",
+        "bag_code": "UI-BAG-004",
+        "seal_number": "000-SEAL/4",
+        "origin_warehouse_id": 101,
+        "destination_warehouse_id": 102,
+        "status": "opened",
+        "shipment_count": 1,
+        "version": 1
+      },
+      {
+        "id": 205,
+        "public_id": "01KAV000000000000000000205",
+        "bag_code": "UI-BAG-005",
+        "seal_number": "000-SEAL/5",
+        "origin_warehouse_id": 101,
+        "destination_warehouse_id": 102,
+        "status": "cancelled",
+        "shipment_count": 0,
+        "version": 1
+      }
+    ],
+    "meta": {
+      "timestamp": "2026-11-26T09:00:00+07:00",
+      "pagination": {
+        "page": 1,
+        "per_page": 20,
+        "total": 5,
+        "total_pages": 1
+      }
+    }
+  },
+  "empty_response": {
+    "success": true,
+    "message": "Fixture danh sách rỗng.",
+    "data": [],
+    "meta": {
+      "timestamp": "2026-11-26T09:00:00+07:00",
+      "pagination": {
+        "page": 1,
+        "per_page": 20,
+        "total": 0,
+        "total_pages": 0
+      }
+    }
+  },
+  "unauthorized_response": {
+    "success": false,
+    "error": {
+      "code": "401_UNAUTHORIZED",
+      "message": "Phiên đăng nhập không hợp lệ.",
+      "details": {}
+    },
+    "meta": {
+      "timestamp": "2026-11-26T09:00:00+07:00"
+    }
+  },
+  "forbidden_response": {
+    "success": false,
+    "error": {
+      "code": "403_FORBIDDEN",
+      "message": "Không có quyền thực hiện thao tác.",
+      "details": {}
+    },
+    "meta": {
+      "timestamp": "2026-11-26T09:00:00+07:00"
+    }
+  },
+  "branch_scope_response": {
+    "success": false,
+    "error": {
+      "code": "403_BRANCH_SCOPE",
+      "message": "Không có quyền truy cập kho này.",
+      "details": {}
+    },
+    "meta": {
+      "timestamp": "2026-11-26T09:00:00+07:00"
+    }
+  },
+  "bag_not_found_response": {
+    "success": false,
+    "error": {
+      "code": "404_NOT_FOUND",
+      "message": "Không tìm thấy mã túi hoặc Seal.",
+      "details": {}
+    },
+    "meta": {
+      "timestamp": "2026-11-26T09:00:00+07:00"
+    }
+  },
+  "shipment_not_found_response": {
+    "success": false,
+    "error": {
+      "code": "404_NOT_FOUND",
+      "message": "Không tìm thấy mã vận đơn.",
+      "details": {}
+    },
+    "meta": {
+      "timestamp": "2026-11-26T09:00:00+07:00"
+    }
+  },
+  "version_conflict_response": {
+    "success": false,
+    "error": {
+      "code": "409_VERSION_CONFLICT",
+      "message": "Dữ liệu vừa được cập nhật, vui lòng tải lại.",
+      "details": {}
+    },
+    "meta": {
+      "timestamp": "2026-11-26T09:00:00+07:00"
+    }
+  },
+  "idempotency_duplicate_response": {
+    "success": false,
+    "error": {
+      "code": "409_IDEMPOTENCY_DUPLICATE",
+      "message": "Giao dịch đang xử lý hoặc key xung đột.",
+      "details": {}
+    },
+    "meta": {
+      "timestamp": "2026-11-26T09:00:00+07:00"
+    }
+  },
+  "duplicate_tracking_response": {
+    "success": false,
+    "error": {
+      "code": "422_VALIDATION_ERROR",
+      "message": "Vận đơn đã có trong cùng túi.",
+      "details": {
+        "tracking_code": [
+          "Mã vận đơn đã tồn tại trong cùng túi."
+        ]
+      }
+    },
+    "meta": {
+      "timestamp": "2026-11-26T09:00:00+07:00"
+    }
+  },
+  "duplicate_seal_response": {
+    "success": false,
+    "error": {
+      "code": "422_VALIDATION_ERROR",
+      "message": "Số Seal đã tồn tại trong nguồn dữ liệu Mock.",
+      "details": {
+        "seal_number": [
+          "Số Seal đã tồn tại."
+        ]
+      }
+    },
+    "meta": {
+      "timestamp": "2026-11-26T09:00:00+07:00"
+    }
+  },
+  "invalid_form_response": {
+    "success": false,
+    "error": {
+      "code": "422_VALIDATION_ERROR",
+      "message": "Dữ liệu nhập không hợp lệ.",
+      "details": {
+        "seal_number": [
+          "Vui lòng nhập số Seal."
+        ],
+        "destination_warehouse_id": [
+          "Vui lòng chọn kho đích."
+        ]
+      }
+    },
+    "meta": {
+      "timestamp": "2026-11-26T09:00:00+07:00"
+    }
+  },
+  "server_error_response": {
+    "success": false,
+    "error": {
+      "code": "500_INTERNAL_ERROR",
+      "message": "Không thể xử lý yêu cầu.",
+      "details": {}
+    },
+    "meta": {
+      "timestamp": "2026-11-26T09:00:00+07:00"
+    }
+  }
+}

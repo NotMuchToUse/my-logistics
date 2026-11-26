@@ -1,0 +1,52 @@
+KHA-38 — Fixture UI tĩnh, Bước 2
+
+Nguồn: yêu cầu KHA-38 mục 5 (cột và trạng thái), xác nhận Bước 2 của Leader,
+AI_SYNC_CONTRACT mục 3 (envelope), network-org/types/network-org.types.ts
+(warehouse.name). Fixture riêng: src/mocks/warehouse-bags.mock.json.
+
+success_response.data là bộ dữ liệu hiển thị nội bộ gồm warehouses,
+manifest_bags, shipments, manifest_bag_items; không phải response DTO KHA-39.
+pagination_response là danh sách cùng năm túi; empty_response là danh sách rỗng.
+Các response còn lại chỉ là ví dụ hiển thị lỗi, không gọi hay mô phỏng endpoint.
+
+Túi và vận đơn là snapshot độc lập, không thể suy ra điều kiện chuyển trạng thái
+hay thời điểm chuyển bagged từ dữ liệu này. Túi cancelled rỗng không xác nhận
+quy tắc hủy/niêm phong túi rỗng. ID nội bộ 101–404, người quét 901 và thời gian
+là dữ liệu tổng hợp phục vụ hiển thị, không phải danh tính thật hoặc payload.
+Không có dữ liệu auth/scope hoặc mapping quyền. Không dùng ID số làm URL.
+
+Chủ đích không có total_weight_gram và trọng lượng từng vận đơn: chưa có số
+liệu hay công thức được xác nhận. Đây là projection thiếu dữ liệu, không phải
+row DB đầy đủ. UI phải dùng trạng thái chưa có dữ liệu (BagSummaryViewState
+confirmedWeightGram = null), không tự đổi thành 0 hay tính tổng. Không có
+adapter HTTP, mutation hoặc response thành công cho tạo/quét/niêm phong/mở túi.
+
+duplicate_tracking_response chỉ mô tả trùng trong cùng túi (uq_bag_shipment),
+không quyết định quy tắc trùng giữa nhiều túi. duplicate_seal_response minh họa
+phản hồi nguồn dữ liệu Mock, không khẳng định frontend kiểm tra được tính duy
+nhất toàn hệ thống. Không thêm mã lỗi mạng/timeout ngoài contract; các tình
+huống transport cần kiểm thử ở service/hook sau khi được duyệt.
+
+Chạy riêng bằng Node (npm test hiện không gồm warehouse-bags):
+node --test src/features/warehouse-bags/tests/warehouse-bags-schema.test.mjs src/features/warehouse-bags/tests/warehouse-bags-mock.test.ts
+
+Bước 3 — service đọc fixture
+api/warehouse-bags.api.ts xuất warehouseBagsApi theo VITE_USE_MOCK và factory
+createWarehouseBagsService cho kiểm thử cấu hình Mock/real, default/empty.
+readFixtureDataset/listBags/findBag/findShipment chỉ đọc và clone dữ liệu;
+findBag trả projection { bag, manifest_bag_items, shipments } để hiển thị,
+không phải DTO API. Tra cứu chuỗi chính xác, không làm mất số 0 đầu của Seal.
+readErrorFixture trả envelope lỗi mẫu để kiểm thử hiển thị, không chạy thao tác
+nghiệp vụ. Hàm tra cứu reject envelope 404/422 khi không tìm thấy/nhập sai.
+
+Chế độ real luôn reject WarehouseBagsContractBlockedError trước I/O, kể cả
+readErrorFixture. Đây là lỗi cấu hình nội bộ, không phải error.code API mới.
+Không có request axios cho đến khi contract KHA-39 được Leader xác nhận;
+khi đó adapter HTTP phải sử dụng axiosClient hiện có. Không có fallback.
+Fixture không xác nhận permission/branch scope; factory Mock chỉ phục vụ UI
+và unit test, chưa được nối vào page/hook hoặc kiểm tra quyền production.
+401/403/409/500 chỉ có envelope mẫu, chưa kiểm thử HTTP/interceptor/retry thật.
+Version, idempotency, network/timeout retry và scope enforcement vẫn BLOCKED.
+
+Chạy toàn bộ test KHA-38 sau Bước 3:
+node --test src/features/warehouse-bags/tests/warehouse-bags-schema.test.mjs src/features/warehouse-bags/tests/warehouse-bags-mock.test.ts src/features/warehouse-bags/tests/warehouse-bags-api.test.ts
