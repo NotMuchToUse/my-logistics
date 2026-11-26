@@ -220,5 +220,8 @@ export function hasShipmentPermission(
   permissions: readonly string[],
   action: "read" | "priority" | "cancel",
 ): boolean {
-  return permissions.includes(SHIPMENT_LIST_PERMISSIONS[action]);
+  return (
+    permissions.includes("*") ||
+    permissions.includes(SHIPMENT_LIST_PERMISSIONS[action])
+  );
 }
