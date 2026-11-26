@@ -266,6 +266,7 @@ export function DynamicSidebar({ onNavigate }: DynamicSidebarProps) {
           const visibleItems = group.items.filter(
             (item) =>
               USE_MOCK ||
+              hasPermission("*") ||
               (item.permissionCode !== null &&
                 hasPermission(item.permissionCode)),
           );

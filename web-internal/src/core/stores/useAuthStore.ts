@@ -30,7 +30,10 @@ export const useAuthStore = create<AuthState>()(
       roles: [],
       permissions: [],
       isAuthenticated: false,
-      hasPermission: (code) => get().permissions.includes(code),
+      hasPermission: (code) => {
+        const permissions = get().permissions;
+        return permissions.includes("*") || permissions.includes(code);
+      },
       login: ({ user, token, roles, permissions }) =>
         set({
           user,

@@ -53,7 +53,7 @@
       "expires_at": "2026-11-26T09:30:00+07:00",
       "user": {
         "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6V9",
-        "full_name": "Trần Quốc Bảo",
+        "full_name": "Lê Hoàng Minh",
         "email": "admin@vietstar.test",
         "employee_code": "VST0000",
         "phone_masked": "091***8888",
@@ -66,17 +66,17 @@
       "permissions": [
         "*",
         "system.manage_settings",
-        "compensation.read"
+        "shipment.read"
       ],
       "branch_scopes": [
         {
           "scope_type": "hq_all",
-          "branch_id": 1,
+          "branch_id": null,
           "warehouse_id": null,
           "is_primary": true,
-          "branch_public_id": "01JDC9X8K2M4N6P8Q0R2S4T6W1",
-          "branch_code": "HQ-HCM",
-          "branch_name": "Tổng công ty TP.HCM"
+          "branch_public_id": null,
+          "branch_code": null,
+          "branch_name": "Toàn hệ thống"
         },
         {
           "scope_type": "branch",
@@ -116,7 +116,7 @@
       },
       {
         "public_id": "01JDC9X8K2M4N6P8Q0R2S4T6V9",
-        "full_name": "Trần Quốc Bảo",
+        "full_name": "Lê Hoàng Minh",
         "email": "admin@vietstar.test",
         "employee_code": "VST0000",
         "user_type": "staff",
