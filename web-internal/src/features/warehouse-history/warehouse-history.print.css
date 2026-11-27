@@ -1,0 +1,10 @@
+.warehouse-history-print { display: none; }
+@media print {
+  body:has(> .warehouse-history-print) > *:not(.warehouse-history-print) { display: none !important; }
+  .warehouse-history-print { display: block; font-size: 11pt; }
+  .warehouse-history-print article { padding: 0; }
+  .warehouse-history-print thead { display: table-header-group; }
+  .warehouse-history-print tr { break-inside: avoid; }
+  .warehouse-history-print .overflow-x-auto { overflow: visible; }
+  .warehouse-history-print td, .warehouse-history-print th { overflow-wrap: anywhere; }
+}
