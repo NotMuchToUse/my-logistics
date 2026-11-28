@@ -196,7 +196,7 @@ const menuGroups: MenuGroup[] = [
         to: "/branch-remittance",
         label: "Nộp tiền về trung tâm",
         icon: FileCheck2,
-        permissionCode: null,
+        permissionCode: "finance.read",
       },
       {
         to: "/hq-finance",
@@ -265,10 +265,9 @@ export function DynamicSidebar({ onNavigate }: DynamicSidebarProps) {
         {menuGroups.map((group) => {
           const visibleItems = group.items.filter(
             (item) =>
-              USE_MOCK ||
-              hasPermission("*") ||
-              (item.permissionCode !== null &&
-                hasPermission(item.permissionCode)),
+              item.permissionCode === null
+                ? USE_MOCK || hasPermission("*")
+                : hasPermission("*") || hasPermission(item.permissionCode),
           );
 
           if (visibleItems.length === 0) {

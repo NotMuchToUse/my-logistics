@@ -1,0 +1,20 @@
+{
+  "success_response": {
+    "success": true,
+    "message": "Lấy bảng kê đủ điều kiện thành công",
+    "data": {
+      "collections": [
+        { "public_id": "01JDC9X8K2M4N6P8Q0R2S4T601", "collection_code": "CC-DNG-20261127-001", "branch_id": 4, "shipment_count": 18, "total_amount": "4250000.00", "status": "locked", "locked_at": "2026-11-27T17:10:00+07:00", "version": 2 },
+        { "public_id": "01JDC9X8K2M4N6P8Q0R2S4T602", "collection_code": "CC-DNG-20261127-002", "branch_id": 4, "shipment_count": 9, "total_amount": "1825000.50", "status": "locked", "locked_at": "2026-11-27T18:05:00+07:00", "version": 1 },
+        { "public_id": "01JDC9X8K2M4N6P8Q0R2S4T603", "collection_code": "CC-DNG-20261127-003", "branch_id": 4, "shipment_count": 5, "total_amount": "0.00", "status": "locked", "locked_at": "2026-11-27T18:40:00+07:00", "version": 1 },
+        { "public_id": "01JDC9X8K2M4N6P8Q0R2S4T604", "collection_code": "CC-DNG-20261127-004", "branch_id": 4, "shipment_count": 3, "total_amount": "950000.00", "status": "draft", "locked_at": null, "version": 1 },
+        { "public_id": "01JDC9X8K2M4N6P8Q0R2S4T605", "collection_code": "CC-DNG-20261127-005", "branch_id": 4, "shipment_count": 7, "total_amount": "760000.00", "status": "cancelled", "locked_at": null, "version": 1 },
+        { "public_id": "01JDC9X8K2M4N6P8Q0R2S4T606", "collection_code": "CC-DNG-20261127-006", "branch_id": 3, "shipment_count": 12, "total_amount": "3100000.00", "status": "locked", "locked_at": "2026-11-27T19:00:00+07:00", "version": 1 }
+      ],
+      "remitted_collection_ids": [],
+      "selected_recipient_name": "Trung tâm Đà Nẵng",
+      "branch_names": { "3": "Chi nhánh Đà Nẵng", "4": "Bưu cục Sơn Trà" }
+    }
+  },
+  "meta": { "timestamp": "2026-11-28T09:00:00+07:00" }
+}
