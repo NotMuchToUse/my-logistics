@@ -15,6 +15,7 @@ export default defineConfig({
       "src/features/shipment-detail/__tests__/**/*.test.{ts,tsx}",
       "src/features/warehouse-audit/**/*.test.{ts,tsx}",
       "src/features/warehouse-outbound-linehaul/tests/**/*.test.{ts,tsx}",
+      "src/features/branch-cod-collection/tests/**/*.test.ts",
       "src/core/stores/__tests__/**/*.test.{ts,tsx}",
     ],
     setupFiles: ["./src/test/setup.ts"],
