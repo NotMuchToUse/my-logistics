@@ -43,7 +43,7 @@ const INITIAL_FILTERS: BranchApprovalFilters = {
 };
 
 export function BranchApprovalsPage() {
-  const roles = useAuthStore((state) => state.roles);
+  const roles = useAuthStore((state) => state.roles); 
   const reviewerName = useAuthStore(
     (state) => state.user?.full_name ?? "Quản lý chi nhánh",
   );
