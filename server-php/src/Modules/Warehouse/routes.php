@@ -36,7 +36,7 @@ return static function (Router $router): void {
         $branchScope,
     ]);
 
-    // 2. Phiếu nhập kho (warehouse_receipts - inbound)
+    // 2. Phiếu kho & Nhập kho (warehouse_receipts)
     $router->get('/api/v1/warehouse/receipts', [$controller, 'indexReceipts'], [
         $auth,
         new PermissionMiddleware($pdo, 'warehouse.read'),
@@ -62,6 +62,12 @@ return static function (Router $router): void {
     $router->post('/api/v1/warehouse/receipts/{public_id}/confirm', [$controller, 'confirmReceipt'], [
         $auth,
         new PermissionMiddleware($pdo, 'warehouse.receive'),
+        $branchScope,
+        $idempotency,
+    ]);
+    $router->post('/api/v1/warehouse/receipts/{public_id}/unlock', [$controller, 'unlockReceipt'], [
+        $auth,
+        new PermissionMiddleware($pdo, 'warehouse.read'),
         $branchScope,
         $idempotency,
     ]);
@@ -98,6 +104,92 @@ return static function (Router $router): void {
     $router->post('/api/v1/warehouse/bags/{public_id}/open', [$controller, 'openBag'], [
         $auth,
         new PermissionMiddleware($pdo, 'warehouse.manage_bags'),
+        $branchScope,
+        $idempotency,
+    ]);
+
+    // 4. Xuất kho giao hàng (outbound_delivery)
+    $router->get('/api/v1/warehouse/outbound-delivery/bootstrap', [$controller, 'outboundDeliveryBootstrap'], [
+        $auth,
+        new PermissionMiddleware($pdo, 'warehouse.read'),
+        $branchScope,
+    ]);
+    $router->post('/api/v1/warehouse/outbound-delivery', [$controller, 'storeOutboundDelivery'], [
+        $auth,
+        new PermissionMiddleware($pdo, 'warehouse.dispatch'),
+        $branchScope,
+        $idempotency,
+    ]);
+    $router->post('/api/v1/warehouse/outbound-delivery/{public_id}/scan', [$controller, 'scanOutboundDelivery'], [
+        $auth,
+        new PermissionMiddleware($pdo, 'warehouse.dispatch'),
+        $branchScope,
+        $idempotency,
+    ]);
+    $router->post('/api/v1/warehouse/outbound-delivery/{public_id}/remove-item', [$controller, 'removeOutboundDeliveryItem'], [
+        $auth,
+        new PermissionMiddleware($pdo, 'warehouse.dispatch'),
+        $branchScope,
+        $idempotency,
+    ]);
+    $router->post('/api/v1/warehouse/outbound-delivery/{public_id}/confirm', [$controller, 'confirmOutboundDelivery'], [
+        $auth,
+        new PermissionMiddleware($pdo, 'warehouse.dispatch'),
+        $branchScope,
+        $idempotency,
+    ]);
+
+    // 5. Xuất kho trung chuyển (outbound_linehaul)
+    $router->get('/api/v1/warehouse/outbound-linehaul/dataset', [$controller, 'outboundLinehaulDataset'], [
+        $auth,
+        new PermissionMiddleware($pdo, 'warehouse.read'),
+        $branchScope,
+    ]);
+    $router->post('/api/v1/warehouse/outbound-linehaul', [$controller, 'storeOutboundLinehaul'], [
+        $auth,
+        new PermissionMiddleware($pdo, 'warehouse.dispatch'),
+        $branchScope,
+        $idempotency,
+    ]);
+    $router->post('/api/v1/warehouse/outbound-linehaul/{public_id}/scan', [$controller, 'scanOutboundLinehaul'], [
+        $auth,
+        new PermissionMiddleware($pdo, 'warehouse.dispatch'),
+        $branchScope,
+        $idempotency,
+    ]);
+    $router->post('/api/v1/warehouse/outbound-linehaul/{public_id}/confirm', [$controller, 'confirmOutboundLinehaul'], [
+        $auth,
+        new PermissionMiddleware($pdo, 'warehouse.dispatch'),
+        $branchScope,
+        $idempotency,
+    ]);
+
+    // 6. Kiểm kê kho (warehouse_stock_audits & warehouse_stock_audit_items)
+    $router->get('/api/v1/warehouse/stock-audits', [$controller, 'indexStockAudits'], [
+        $auth,
+        new PermissionMiddleware($pdo, 'warehouse.audit'),
+        $branchScope,
+    ]);
+    $router->post('/api/v1/warehouse/stock-audits', [$controller, 'storeStockAudit'], [
+        $auth,
+        new PermissionMiddleware($pdo, 'warehouse.audit'),
+        $branchScope,
+        $idempotency,
+    ]);
+    $router->get('/api/v1/warehouse/stock-audits/{audit_id}', [$controller, 'showStockAudit'], [
+        $auth,
+        new PermissionMiddleware($pdo, 'warehouse.audit'),
+        $branchScope,
+    ]);
+    $router->post('/api/v1/warehouse/stock-audits/{audit_id}/scan', [$controller, 'scanStockAudit'], [
+        $auth,
+        new PermissionMiddleware($pdo, 'warehouse.audit'),
+        $branchScope,
+        $idempotency,
+    ]);
+    $router->post('/api/v1/warehouse/stock-audits/{audit_id}/complete', [$controller, 'completeStockAudit'], [
+        $auth,
+        new PermissionMiddleware($pdo, 'warehouse.audit'),
         $branchScope,
         $idempotency,
     ]);
