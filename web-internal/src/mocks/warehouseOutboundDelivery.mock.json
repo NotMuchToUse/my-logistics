@@ -1,0 +1,276 @@
+{
+  "success_response": {
+    "success": true,
+    "message": "Lấy dữ liệu điều phối xuất kho giao hàng thành công.",
+    "data": {
+      "warehouse": {
+        "id": 2,
+        "code": "WH-DN-01",
+        "name": "Kho Bưu cục Hải Châu - Đà Nẵng",
+        "branch_id": 2,
+        "branch_name": "Chi nhánh Đà Nẵng"
+      },
+      "drivers": [
+        {
+          "id": 201,
+          "public_id": "01JDC9DRV00000000000000201",
+          "employee_code": "DRV-DN-001",
+          "full_name": "Trần Văn Hùng",
+          "phone_masked": "090***1122",
+          "branch_id": 2,
+          "vehicle_plate": "43C1-458.92",
+          "active_delivery_count": 4,
+          "is_active": true
+        },
+        {
+          "id": 202,
+          "public_id": "01JDC9DRV00000000000000202",
+          "employee_code": "DRV-DN-002",
+          "full_name": "Lê Quốc Bảo",
+          "phone_masked": "091***3344",
+          "branch_id": 2,
+          "vehicle_plate": "43D1-782.10",
+          "active_delivery_count": 2,
+          "is_active": true
+        },
+        {
+          "id": 203,
+          "public_id": "01JDC9DRV00000000000000203",
+          "employee_code": "DRV-DN-003",
+          "full_name": "Phạm Hoàng Nam",
+          "phone_masked": "093***5566",
+          "branch_id": 2,
+          "vehicle_plate": "43E1-219.05",
+          "active_delivery_count": 0,
+          "is_active": true
+        }
+      ],
+      "available_shipments": [
+        {
+          "shipment_id": 301,
+          "shipment_public_id": "01JDC9SHP00000000000000301",
+          "tracking_code": "VSDN261128001",
+          "status": "in_warehouse",
+          "current_branch_id": 2,
+          "current_warehouse_id": 2,
+          "destination_branch_id": 2,
+          "recipient_name": "Nguyễn Thị Mai Anh",
+          "recipient_phone_masked": "098***7101",
+          "recipient_address": "124 Nguyễn Văn Linh, P. Nam Dương, Q. Hải Châu, Đà Nẵng",
+          "chargeable_weight_gram": 1200,
+          "parcel_count": 1,
+          "cod_amount": 450000
+        },
+        {
+          "shipment_id": 302,
+          "shipment_public_id": "01JDC9SHP00000000000000302",
+          "tracking_code": "VSDN261128002",
+          "status": "in_warehouse",
+          "current_branch_id": 2,
+          "current_warehouse_id": 2,
+          "destination_branch_id": 2,
+          "recipient_name": "Đặng Minh Tuấn",
+          "recipient_phone_masked": "097***8202",
+          "recipient_address": "48 Lê Duẩn, P. Hải Châu 1, Q. Hải Châu, Đà Nẵng",
+          "chargeable_weight_gram": 850,
+          "parcel_count": 1,
+          "cod_amount": 0
+        },
+        {
+          "shipment_id": 303,
+          "shipment_public_id": "01JDC9SHP00000000000000303",
+          "tracking_code": "VSDN261128003",
+          "status": "delivery_failed",
+          "current_branch_id": 2,
+          "current_warehouse_id": 2,
+          "destination_branch_id": 2,
+          "recipient_name": "Võ Thị Thanh Thảo",
+          "recipient_phone_masked": "090***9303",
+          "recipient_address": "215 Trần Phú, P. Phước Ninh, Q. Hải Châu, Đà Nẵng",
+          "chargeable_weight_gram": 2400,
+          "parcel_count": 2,
+          "cod_amount": 1280000
+        },
+        {
+          "shipment_id": 304,
+          "shipment_public_id": "01JDC9SHP00000000000000304",
+          "tracking_code": "VSDN261128004",
+          "status": "in_warehouse",
+          "current_branch_id": 2,
+          "current_warehouse_id": 2,
+          "destination_branch_id": 2,
+          "recipient_name": "Huỳnh Tấn Phát",
+          "recipient_phone_masked": "091***4404",
+          "recipient_address": "89 Phan Châu Trinh, P. Hải Châu 1, Q. Hải Châu, Đà Nẵng",
+          "chargeable_weight_gram": 600,
+          "parcel_count": 1,
+          "cod_amount": 320000
+        },
+        {
+          "shipment_id": 305,
+          "shipment_public_id": "01JDC9SHP00000000000000305",
+          "tracking_code": "VSDN261128005",
+          "status": "in_warehouse",
+          "current_branch_id": 2,
+          "current_warehouse_id": 2,
+          "destination_branch_id": 2,
+          "recipient_name": "Bùi Ngọc Hân",
+          "recipient_phone_masked": "093***5505",
+          "recipient_address": "16 Bạch Đằng, P. Thạch Thang, Q. Hải Châu, Đà Nẵng",
+          "chargeable_weight_gram": 3100,
+          "parcel_count": 2,
+          "cod_amount": 890000
+        }
+      ],
+      "active_draft": {
+        "public_id": "01JDC9OUT00000000000000001",
+        "receipt_code": "WHOUT-20261128-DN01",
+        "receipt_type": "outbound_delivery",
+        "warehouse_id": 2,
+        "warehouse_code": "WH-DN-01",
+        "warehouse_name": "Kho Bưu cục Hải Châu - Đà Nẵng",
+        "branch_id": 2,
+        "branch_name": "Chi nhánh Đà Nẵng",
+        "driver_id": 201,
+        "driver_code": "DRV-DN-001",
+        "driver_name": "Trần Văn Hùng",
+        "driver_phone_masked": "090***1122",
+        "total_shipments": 1,
+        "total_weight_gram": 1200,
+        "total_cod_amount": 450000,
+        "status": "draft",
+        "note": "Tuyến giao sáng khu vực Hải Châu",
+        "confirmed_at": null,
+        "confirmed_by_name": null,
+        "created_by_name": "Nguyễn Minh An",
+        "version": 1,
+        "created_at": "2026-11-28 08:15:00",
+        "updated_at": "2026-11-28 08:20:00",
+        "items": [
+          {
+            "id": 1001,
+            "shipment_id": 301,
+            "shipment_public_id": "01JDC9SHP00000000000000301",
+            "tracking_code": "VSDN261128001",
+            "shipment_status": "in_warehouse",
+            "recipient_name": "Nguyễn Thị Mai Anh",
+            "recipient_phone_masked": "098***7101",
+            "recipient_address": "124 Nguyễn Văn Linh, P. Nam Dương, Q. Hải Châu, Đà Nẵng",
+            "chargeable_weight_gram": 1200,
+            "parcel_count": 1,
+            "cod_amount": 450000,
+            "scanned_at": "2026-11-28 08:16:10",
+            "scanned_by_name": "Nguyễn Minh An",
+            "removed_at": null,
+            "remove_reason": null,
+            "removed_by_name": null
+          }
+        ]
+      },
+      "recent_confirmed": [
+        {
+          "public_id": "01JDC9OUT00000000000000000",
+          "receipt_code": "WHOUT-20261127-DN09",
+          "receipt_type": "outbound_delivery",
+          "warehouse_id": 2,
+          "warehouse_code": "WH-DN-01",
+          "warehouse_name": "Kho Bưu cục Hải Châu - Đà Nẵng",
+          "branch_id": 2,
+          "branch_name": "Chi nhánh Đà Nẵng",
+          "driver_id": 202,
+          "driver_code": "DRV-DN-002",
+          "driver_name": "Lê Quốc Bảo",
+          "driver_phone_masked": "091***3344",
+          "total_shipments": 1,
+          "total_weight_gram": 1500,
+          "total_cod_amount": 620000,
+          "status": "confirmed",
+          "note": "Ca chiều ngày 27/11",
+          "confirmed_at": "2026-11-27 14:30:00",
+          "confirmed_by_name": "Nguyễn Minh An",
+          "created_by_name": "Nguyễn Minh An",
+          "version": 2,
+          "created_at": "2026-11-27 14:10:00",
+          "updated_at": "2026-11-27 14:30:00",
+          "items": [
+            {
+              "id": 990,
+              "shipment_id": 299,
+              "shipment_public_id": "01JDC9SHP00000000000000299",
+              "tracking_code": "VSDN261127099",
+              "shipment_status": "out_for_delivery",
+              "recipient_name": "Trịnh Quốc Khánh",
+              "recipient_phone_masked": "090***6677",
+              "recipient_address": "52 Hoàng Diệu, Q. Hải Châu, Đà Nẵng",
+              "chargeable_weight_gram": 1500,
+              "parcel_count": 1,
+              "cod_amount": 620000,
+              "scanned_at": "2026-11-27 14:12:00",
+              "scanned_by_name": "Nguyễn Minh An",
+              "removed_at": null,
+              "remove_reason": null,
+              "removed_by_name": null
+            }
+          ]
+        }
+      ]
+    },
+    "meta": {
+      "timestamp": "2026-11-28T08:25:00+07:00"
+    }
+  },
+  "pagination_response": {
+    "success": true,
+    "message": "Lấy danh sách phiếu xuất kho giao hàng thành công.",
+    "data": [
+      {
+        "public_id": "01JDC9OUT00000000000000001",
+        "receipt_code": "WHOUT-20261128-DN01",
+        "receipt_type": "outbound_delivery",
+        "warehouse_id": 2,
+        "warehouse_code": "WH-DN-01",
+        "warehouse_name": "Kho Bưu cục Hải Châu - Đà Nẵng",
+        "branch_id": 2,
+        "branch_name": "Chi nhánh Đà Nẵng",
+        "driver_id": 201,
+        "driver_code": "DRV-DN-001",
+        "driver_name": "Trần Văn Hùng",
+        "driver_phone_masked": "090***1122",
+        "total_shipments": 1,
+        "total_weight_gram": 1200,
+        "total_cod_amount": 450000,
+        "status": "draft",
+        "note": "Tuyến giao sáng khu vực Hải Châu",
+        "confirmed_at": null,
+        "confirmed_by_name": null,
+        "created_by_name": "Nguyễn Minh An",
+        "version": 1,
+        "created_at": "2026-11-28 08:15:00",
+        "updated_at": "2026-11-28 08:20:00",
+        "items": []
+      }
+    ],
+    "meta": {
+      "pagination": {
+        "page": 1,
+        "per_page": 20,
+        "total": 1,
+        "total_pages": 1
+      },
+      "timestamp": "2026-11-28T08:25:00+07:00"
+    }
+  },
+  "error_response": {
+    "success": false,
+    "error": {
+      "code": "422_VALIDATION_ERROR",
+      "message": "Dữ liệu phiếu xuất kho giao hàng không hợp lệ.",
+      "details": {
+        "remove_reason": [
+          "Vui lòng nhập lý do gỡ đơn (tối thiểu 3 ký tự)."
+        ]
+      },
+      "trace_id": "ERR-20261128-WHOD01"
+    }
+  }
+}
