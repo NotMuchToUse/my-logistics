@@ -178,4 +178,21 @@ final class Router
 
         return $response;
     }
+
+    /**
+     * @return array<int, array{method: string, path: string, middleware: array<int, MiddlewareInterface>}>
+     */
+    public function allRoutes(): array
+    {
+        $result = [];
+        foreach ($this->routes as $route) {
+            $result[] = [
+                'method' => $route['method'],
+                'path' => $route['path'],
+                'middleware' => $route['middleware'],
+            ];
+        }
+
+        return $result;
+    }
 }
