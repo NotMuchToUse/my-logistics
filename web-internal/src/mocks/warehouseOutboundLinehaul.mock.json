@@ -1,0 +1,114 @@
+{
+  "success_response": {
+    "success": true,
+    "message": "Dữ liệu xuất kho trung chuyển mô phỏng.",
+    "data": {
+      "warehouses": [
+        { "id": 1, "code": "WH-DN-01", "name": "Kho trung chuyển Đà Nẵng" },
+        { "id": 2, "code": "WH-HN-01", "name": "Kho trung chuyển Hà Nội" },
+        { "id": 3, "code": "WH-HCM-01", "name": "Kho trung chuyển TP. Hồ Chí Minh" }
+      ],
+      "vehicles": [
+        {
+          "id": 3301,
+          "plate_number": "MOCK-VAN-01",
+          "vehicle_type": "van",
+          "max_payload_kg": "1500.00",
+          "status": "available"
+        }
+      ],
+      "partners": [
+        {
+          "id": 3201,
+          "code": "MOCK-3PL-01",
+          "name": "Đối tác vận tải mẫu",
+          "partner_type": "linehaul_carrier",
+          "is_active": 1
+        },
+        {
+          "id": 3203,
+          "code": "MOCK-AIR-01",
+          "name": "Đại lý hàng không mẫu",
+          "partner_type": "airline_agent",
+          "is_active": 1
+        }
+      ],
+      "shipments": [
+        {
+          "tracking_code": "DEMO-VS-WH1-0001",
+          "status": "in_warehouse",
+          "current_warehouse_id": 1,
+          "destination_branch_id": 5,
+          "chargeable_weight_gram": 1200
+        },
+        {
+          "tracking_code": "VS26112300002",
+          "status": "in_warehouse",
+          "current_warehouse_id": 2,
+          "destination_branch_id": 4,
+          "chargeable_weight_gram": 800
+        },
+        {
+          "tracking_code": "VS26112300003",
+          "status": "bagged",
+          "current_warehouse_id": 2,
+          "destination_branch_id": 5,
+          "chargeable_weight_gram": 3200
+        }
+      ],
+      "sealed_bags": [
+        {
+          "seal_number": "MOCK-SEAL-001",
+          "origin_warehouse_id": 2,
+          "destination_warehouse_id": 1,
+          "chargeable_weight_gram": 850000,
+          "is_sealed": true
+        },
+        {
+          "seal_number": "MOCK-SEAL-002",
+          "origin_warehouse_id": 2,
+          "destination_warehouse_id": 1,
+          "chargeable_weight_gram": 750000,
+          "is_sealed": true
+        }
+      ],
+      "routing_rules": [
+        {
+          "origin_warehouse_id": 1,
+          "destination_branch_id": 5,
+          "next_hop_warehouse_id": 2,
+          "is_active": 1
+        },
+        {
+          "origin_warehouse_id": 2,
+          "destination_branch_id": 4,
+          "next_hop_warehouse_id": 3,
+          "is_active": 1
+        },
+        {
+          "origin_warehouse_id": 2,
+          "destination_branch_id": 5,
+          "next_hop_warehouse_id": 1,
+          "is_active": 1
+        }
+      ]
+    },
+    "meta": { "timestamp": "2026-11-28T10:00:00+07:00" }
+  },
+  "pagination_response": {
+    "success": true,
+    "message": "Không có phiếu xuất kho trung chuyển trong dữ liệu mô phỏng.",
+    "data": [],
+    "meta": {
+      "timestamp": "2026-11-28T10:00:00+07:00",
+      "pagination": { "page": 1, "per_page": 20, "total": 0, "total_pages": 0 }
+    }
+  },
+  "error_response": {
+    "success": false,
+    "error": {
+      "code": "422_VALIDATION_ERROR",
+      "message": "Mã vận đơn hoặc mã Seal không hợp lệ trong dữ liệu mô phỏng."
+    }
+  }
+}
