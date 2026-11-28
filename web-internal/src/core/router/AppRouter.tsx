@@ -96,6 +96,7 @@ export function AppRouter() {
             element={<WarehouseOutboundDeliveryPage />}
           />
           <Route path="warehouse-history" element={<WarehouseHistoryPage />} />
+          <Route path="warehouse-history/:publicId" element={<WarehouseHistoryPage />} />
           <Route path="warehouse-audit" element={<WarehouseAuditPage />} />
           <Route
             path="branch-cod-collection"

@@ -1,0 +1,52 @@
+import { afterEach, expect, it, vi } from "vitest";
+import { act, cleanup, renderHook, waitFor } from "@testing-library/react";
+const api = vi.hoisted(() => ({ listHistory: vi.fn(), getReceipt: vi.fn(), historyErrorMessage: () => "Lỗi tải dữ liệu" }));
+vi.mock("../api/warehouse-history.api", () => api);
+import { useWarehouseHistory } from "../hooks/useWarehouseHistory";
+import { INITIAL_FILTERS, type HistoryContext, type ReceiptPage } from "../warehouse-history.model";
+const context: HistoryContext = { authenticated: true, can_read: true, roles: [], branch_id: 3, warehouse_id: null, demo_scope: true, unlock_capability: false };
+const page = (total: number): ReceiptPage => ({ data: [], meta: { pagination: { page: 1, per_page: 20, total, total_pages: 1 } } });
+afterEach(() => { cleanup(); vi.resetAllMocks(); });
+it("hides previous context immediately and ignores delayed old-branch responses", async () => {
+  let finish: (value: ReceiptPage) => void = () => {};
+  api.listHistory.mockImplementationOnce(() => new Promise<ReceiptPage>((resolve) => { finish = resolve; })).mockResolvedValueOnce(page(2));
+  const hook = renderHook(({ c }) => useWarehouseHistory(c, INITIAL_FILTERS), { initialProps: { c: context } });
+  hook.rerender({ c: { ...context, branch_id: 2 } });
+  expect(hook.result.current.list).toBeUndefined();
+  await waitFor(() => expect(hook.result.current.list?.meta.pagination.total).toBe(2));
+  await act(async () => { finish(page(100)); });
+  expect(hook.result.current.list?.meta.pagination.total).toBe(2);
+  expect(api.listHistory.mock.calls[0][2].aborted).toBe(true);
+});
+it("ignores an old HQ response after switching to a branch", async () => {
+  let finish: (value: ReceiptPage) => void = () => {};
+  api.listHistory.mockImplementationOnce(() => new Promise<ReceiptPage>((resolve) => { finish = resolve; })).mockResolvedValueOnce(page(48));
+  const hq: HistoryContext = { ...context, scope_type: "hq_all", branch_id: null };
+  const hook = renderHook(({ c }) => useWarehouseHistory(c, INITIAL_FILTERS), { initialProps: { c: hq } });
+  hook.rerender({ c: context });
+  expect(hook.result.current.list).toBeUndefined();
+  await waitFor(() => expect(hook.result.current.list?.meta.pagination.total).toBe(48));
+  await act(async () => { finish(page(96)); });
+  expect(hook.result.current.list?.meta.pagination.total).toBe(48);
+});
+it("clears rows on failure and supports explicit refetch", async () => {
+  api.listHistory.mockRejectedValueOnce(new Error("Timeout")).mockResolvedValueOnce(page(3));
+  const hook = renderHook(() => useWarehouseHistory(context, INITIAL_FILTERS));
+  await waitFor(() => expect(hook.result.current.error).toBeTruthy());
+  expect(hook.result.current.list).toBeUndefined();
+  act(() => hook.result.current.refetch());
+  await waitFor(() => expect(hook.result.current.list?.meta.pagination.total).toBe(3));
+});
+it("clears old detail immediately on ID change and ignores completion after unmount", async () => {
+  const { createFixtures } = await import("../api/warehouse-history.mock");
+  const rows = createFixtures();
+  api.getReceipt.mockResolvedValueOnce(rows[0]);
+  let finish: (value: typeof rows[number]) => void = () => {};
+  api.getReceipt.mockImplementationOnce(() => new Promise((resolve) => { finish = resolve; }));
+  const hook = renderHook(({ id }) => useWarehouseHistory(context, INITIAL_FILTERS, id), { initialProps: { id: rows[0].public_id } });
+  await waitFor(() => expect(hook.result.current.receipt?.public_id).toBe(rows[0].public_id));
+  hook.rerender({ id: rows[1].public_id });
+  expect(hook.result.current.receipt).toBeUndefined();
+  hook.unmount(); await act(async () => { finish(rows[1]); });
+  expect(api.getReceipt.mock.calls[1][2].aborted).toBe(true);
+});
