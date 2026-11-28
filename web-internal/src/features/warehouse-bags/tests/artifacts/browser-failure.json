@@ -1,0 +1,22 @@
+{
+  "error": "[object ErrorEvent]",
+  "diagnostics": {
+    "profile": "C:\\Users\\kienp\\AppData\\Local\\Temp\\kha38-chrome-ASw962",
+    "browser_pid": 19968,
+    "browser_stderr": [
+      "[19968:8008:1126/110239.962:ERROR:components\\os_crypt\\async\\browser\\os_crypt_win.cc:63] Failed to encrypt: The system cannot find the file specified. (0x2)\r\n",
+      "[19968:28884:1126/110240.005:ERROR:chrome\\installer\\util\\google_update_settings_win.cc:272] Failed opening key Software\\Google\\Update\\ClientStateMedium\\{8A69D345-D564-463c-AFF1-A69D9E530F96} to set usagestats; result: 5\r\n",
+      "\r\nDevTools listening on ws://127.0.0.1:54396/devtools/browser/b129c946-a956-4f9f-aee3-18cdf702a0d6\r\n",
+      "[19968:31612:1126/110240.105:ERROR:components\\password_manager\\core\\browser\\password_store\\login_database_async_helper.cc:100] Encryption is not available.\r\n",
+      "[19968:31968:1126/110240.106:ERROR:components\\password_manager\\core\\browser\\password_store\\login_database_async_helper.cc:100] Encryption is not available.\r\n",
+      "[19968:8008:1126/110240.203:ERROR:content\\browser\\gpu\\gpu_process_host.cc:1042] GPU process exited unexpectedly: exit_code=-1073741790\r\n[19968:28884:1126/110240.205:ERROR:components\\viz\\host\\persistent_cache_sandboxed_file_factory.cc:157] Failed to open persistent cache files in directory \"C:\\Users\\kienp\\AppData\\Local\\Temp\\kha38-chrome-ASw962\\GPUPersistentCache\\DawnGraphiteCache\\NDWEEXLJMJ6C2FVOJVYE645YJQVCYHRX\", error: 0: The process cannot access the file because it is being used by another process. (0x20)\r\n",
+      "[19968:8008:1126/110240.261:ERROR:content\\browser\\gpu\\gpu_process_host.cc:1042] GPU process exited unexpectedly: exit_code=-1073741790\r\n[19968:32192:1126/110240.281:ERROR:services\\device\\public\\cpp\\geolocation\\system_geolocation_source_win.cc:124] Failed to create IAppCapability: Access is denied. (0x80070005)\r\n[19968:32036:1126/110240.311:ERROR:components\\viz\\host\\persistent_cache_sandboxed_file_factory.cc:157] Failed to open persistent cache files in directory \"C:\\Users\\kienp\\AppData\\Local\\Temp\\kha38-chrome-ASw962\\GPUPersistentCache\\DawnGraphiteCache\\NDWEEXLJMJ6C2FVOJVYE645YJQVCYHRX\", error: 0: The process cannot access the file because it is being used by another process. (0x20)\r\n[19968:8008:1126/110240.318:ERROR:content\\browser\\gpu\\gpu_process_host.cc:1042] GPU process exited unexpectedly: exit_code=-1073741790\r\n[19968:28884:1126/110240.320:ERROR:components\\viz\\host\\persistent_cache_sandboxed_file_factory.cc:157] Failed to open persistent cache files in directory \"C:\\Users\\kienp\\AppData\\Local\\Temp\\kha38-chrome-ASw962\\GPUPersistentCache\\DawnGraphiteCache\\NDWEEXLJMJ6C2FVOJVYE645YJQVCYHRX\", error: 0: The process cannot access the file because it is being used by another process. (0x20)\r\n[19968:8008:1126/110240.361:ERROR:content\\browser\\gpu\\gpu_process_host.cc:1042] GPU process exited unexpectedly: exit_code=-1073741790\r\n[19968:8008:1126/110240.401:ERROR:content\\browser\\gpu\\gpu_process_host.cc:1042] GPU process exited unexpectedly: exit_code=-1073741790\r\n[19968:28884:1126/110240.401:ERROR:components\\viz\\host\\persistent_cache_sandboxed_file_factory.cc:157] Failed to open persistent cache files in directory \"C:\\Users\\kienp\\AppData\\Local\\Temp\\kha38-chrome-ASw962\\GPUPersistentCache\\DawnGraphiteCache\\NDWEEXLJMJ6C2FVOJVYE645YJQVCYHRX\", error: 0: The process cannot access the file because it is being used by another process. (0x20)\r\n[19968:8008:1126/110240.453:ERROR:content\\browser\\gpu\\gpu_process_host.cc:1042] GPU process exited unexpectedly: exit_code=-1073741790\r\n[19968:8008:1126/110240.453:FATAL:content\\browser\\gpu\\gpu_data_manager_impl_private.cc:385] GPU process isn't usable. Goodbye.\r\n"
+    ],
+    "stages": [
+      "debugging port ready: 54396",
+      "dev server harness HTTP 200",
+      "browser endpoint ready: Chrome/158.0.8127.37"
+    ]
+  },
+  "runtime_errors": []
+}

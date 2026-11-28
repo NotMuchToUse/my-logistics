@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vietstar Logistics API Docs &amp; Playground</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --panel: #111827;
+      --panel-2: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --purple: #a855f7;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      z-index: 10;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand-badge {
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      color: #0f172a;
+      font-weight: 800;
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+    }
+    .brand h1 { margin: 0; font-size: 16px; font-weight: 700; }
+    .brand span { font-size: 12px; color: var(--muted); }
+    .session-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+    .input-group {
+      display: flex;
+      align-items: center;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 8px;
+      gap: 6px;
+      font-size: 12px;
+    }
+    .input-group label { color: var(--muted); white-space: nowrap; }
+    .input-group input, .input-group select {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-size: 12px;
+      outline: none;
+      font-family: var(--mono);
+    }
+    .input-group select option { background: var(--panel); color: var(--text); }
+    button {
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: 0.15s ease;
+    }
+    button:hover { border-color: var(--accent); }
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #082f49;
+    }
+    button.primary:hover { background: #7dd3fc; }
+    button.success {
+      background: var(--green);
+      border-color: var(--green);
+      color: #022c22;
+    }
+    .workspace {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      flex: 1;
+      overflow: hidden;
+    }
+    aside {
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .sidebar-controls {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .search-box {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      outline: none;
+    }
+    .search-box:focus { border-color: var(--accent); }
+    .filter-row { display: flex; flex-wrap: wrap; gap: 4px; }
+    .chip {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .chip.active {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .route-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
+    .module-group { margin-bottom: 14px; }
+    .module-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--muted);
+      padding: 4px 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .route-item {
+      padding: 8px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      margin-bottom: 3px;
+      transition: 0.12s;
+    }
+    .route-item:hover { background: rgba(255, 255, 255, 0.04); }
+    .route-item.active {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: rgba(56, 189, 248, 0.45);
+    }
+    .route-top { display: flex; align-items: center; gap: 8px; }
+    .method {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+      min-width: 50px;
+      text-align: center;
+    }
+    .m-GET { background: rgba(16, 185, 129, 0.18); color: #34d399; }
+    .m-POST { background: rgba(56, 189, 248, 0.18); color: #38bdf8; }
+    .m-PATCH, .m-PUT { background: rgba(245, 158, 11, 0.18); color: #fbbf24; }
+    .m-DELETE { background: rgba(239, 68, 68, 0.18); color: #f87171; }
+    .route-path {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text);
+      word-break: break-all;
+    }
+    .route-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+      padding-left: 58px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    main {
+      overflow-y: auto;
+      padding: 20px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+    .endpoint-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .endpoint-url-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .endpoint-url-box code {
+      font-family: var(--mono);
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .pill {
+      font-size: 11px;
+      font-family: var(--mono);
+      padding: 3px 8px;
+      border-radius: 5px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      color: #cbd5e1;
+    }
+    .pill.live { border-color: rgba(16,185,129,0.5); color: #34d399; background: rgba(16,185,129,0.1); }
+    .pill.warn { border-color: rgba(245,158,11,0.5); color: #fbbf24; background: rgba(245,158,11,0.1); }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 1050px) {
+      .workspace { grid-template-columns: 1fr; }
+      aside { height: 260px; }
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+    h3 {
+      margin: 0 0 10px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .param-row {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+    .param-row label { font-family: var(--mono); color: #e2e8f0; }
+    .param-row input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 8px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+    textarea.json-editor {
+      width: 100%;
+      min-height: 210px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      color: #e2e8f0;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.5;
+      resize: vertical;
+      outline: none;
+    }
+    textarea.json-editor:focus { border-color: var(--accent); }
+    .tabs {
+      display: flex;
+      gap: 6px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+    .tab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--muted);
+      padding: 5px 10px;
+    }
+    .tab-btn.active {
+      background: var(--panel-2);
+      border-color: var(--border);
+      color: var(--text);
+    }
+    pre.code-box {
+      margin: 0;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.55;
+      overflow-x: auto;
+      max-height: 360px;
+      color: #e2e8f0;
+    }
+    table.schema-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+    }
+    table.schema-table th, table.schema-table td {
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    table.schema-table th { color: var(--muted); font-weight: 600; background: rgba(15,23,42,0.5); }
+    table.schema-table td.field-col { font-family: var(--mono); color: #38bdf8; }
+    table.schema-table td.type-col { font-family: var(--mono); color: #fbbf24; }
+    .status-badge {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 5px;
+    }
+    .st-ok { background: rgba(16,185,129,0.2); color: #34d399; }
+    .st-err { background: rgba(239,68,68,0.2); color: #f87171; }
+    .muted { color: var(--muted); font-size: 12.5px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span class="brand-badge">API v1</span>
+      <div>
+        <h1>Vietstar Logistics &mdash; API Docs &amp; Live Tester</h1>
+        <span id="routeCountText">Đang tải danh sách endpoint từ server...</span>
+      </div>
+    </div>
+    <div class="session-bar">
+      <div class="input-group">
+        <label>Base URL</label>
+        <input id="baseUrlInput" type="text" size="22" />
+      </div>
+      <div class="input-group">
+        <label>Client</label>
+        <select id="clientTypeInput">
+          <option value="web_internal">web_internal</option>
+          <option value="web_customer">web_customer</option>
+          <option value="mobile_driver">mobile_driver</option>
+          <option value="mobile_customer">mobile_customer</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>X-Branch-Id</label>
+        <input id="branchIdInput" type="number" value="3" style="width: 54px;" />
+      </div>
+      <div class="input-group">
+        <label>Bearer Token</label>
+        <input id="tokenInput" type="text" placeholder="Chưa đăng nhập..." size="20" />
+      </div>
+      <button class="success" id="quickLoginBtn" title="Đăng nhập nhanh tài khoản admin@vietstar.vn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Login nhanh (Admin)
+      </button>
+    </div>
+  </header>
+
+  <div class="workspace">
+    <aside>
+      <div class="sidebar-controls">
+        <input id="searchInput" class="search-box" type="text" placeholder="Tìm endpoint, module, quyền (vd: shipment)..." />
+        <div class="filter-row" id="methodFilters">
+          <button class="chip active" data-method="ALL">Tất cả</button>
+          <button class="chip" data-method="GET">GET</button>
+          <button class="chip" data-method="POST">POST</button>
+          <button class="chip" data-method="PATCH">PATCH/PUT</button>
+          <button class="chip" data-method="DELETE">DELETE</button>
+        </div>
+      </div>
+      <div class="route-list" id="routeList"></div>
+    </aside>
+
+    <main id="mainPane">
+      <div class="card">
+        <p class="muted">Đang kết nối <code>/api/v1/docs/spec</code>...</p>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const state = {
+      spec: null,
+      selectedId: null,
+      methodFilter: 'ALL',
+      search: '',
+      activeTab: 'live',
+      lastResponse: null,
+    };
+
+    const baseUrlInput = document.getElementById('baseUrlInput');
+    const clientTypeInput = document.getElementById('clientTypeInput');
+    const branchIdInput = document.getElementById('branchIdInput');
+    const tokenInput = document.getElementById('tokenInput');
+
+    baseUrlInput.value = window.location.origin;
+    tokenInput.value = localStorage.getItem('vs_docs_token') || '';
+    branchIdInput.value = localStorage.getItem('vs_docs_branch') || '3';
+
+    tokenInput.addEventListener('input', () => localStorage.setItem('vs_docs_token', tokenInput.value.trim()));
+    branchIdInput.addEventListener('input', () => localStorage.setItem('vs_docs_branch', branchIdInput.value.trim()));
+
+    function uuidv4() {
+      if (crypto && crypto.randomUUID) return crypto.randomUUID();
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+        const r = Math.random() * 16 | 0;
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+      });
+    }
+
+    function esc(str) {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    async function loadSpec() {
+      try {
+        const res = await fetch(`${baseUrlInput.value}/api/v1/docs/spec`, {
+          headers: {
+            'Accept': 'application/json',
+            'X-Client-Type': clientTypeInput.value || 'web_internal',
+          }
+        });
+        const json = await res.json();
+        state.spec = json.data;
+        document.getElementById('routeCountText').textContent =
+          `${state.spec.total_live_endpoints} endpoint đang hoạt động (tự động đồng bộ từ Router)`;
+        if (state.spec.endpoints.length > 0) {
+          state.selectedId = state.spec.endpoints[0].id;
+        }
+        renderSidebar();
+        renderDetail();
+      } catch (err) {
+        document.getElementById('mainPane').innerHTML =
+          `<div class="card"><strong style="color:#f87171">Không tải được /api/v1/docs/spec:</strong> ${esc(err.message)}</div>`;
+      }
+    }
+
+    document.getElementById('quickLoginBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('quickLoginBtn');
+      const oldText = btn.textContent;
+      btn.textContent = 'Đang đăng nhập...';
+      try {
+        const res = await fetch(`${baseUrlInput.value}/api/v1/auth/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-Client-Type': clientTypeInput.value || 'web_internal',
+          },
+          body: JSON.stringify({ identifier: 'admin@vietstar.vn', password: 'Vietstar123!' }),
+        });
+        const json = await res.json();
+        if (json.success && json.data && json.data.access_token) {
+          tokenInput.value = json.data.access_token;
+          localStorage.setItem('vs_docs_token', json.data.access_token);
+          btn.textContent = 'Đã gắn Token Admin';
+          setTimeout(() => { btn.textContent = oldText; }, 2000);
+          renderDetail();
+        } else {
+          alert('Login thất bại: ' + (json.error?.message || res.status));
+          btn.textContent = oldText;
+        }
+      } catch (e) {
+        alert('Lỗi kết nối: ' + e.message);
+        btn.textContent = oldText;
+      }
+    });
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      state.search = e.target.value.toLowerCase().trim();
+      renderSidebar();
+    });
+
+    document.getElementById('methodFilters').addEventListener('click', (e) => {
+      const chip = e.target.closest('.chip');
+      if (!chip) return;
+      document.querySelectorAll('#methodFilters .chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      state.methodFilter = chip.dataset.method;
+      renderSidebar();
+    });
+
+    function renderSidebar() {
+      if (!state.spec) return;
+      const filtered = state.spec.endpoints.filter(ep => {
+        if (state.methodFilter !== 'ALL') {
+          if (state.methodFilter === 'PATCH') {
+            if (ep.method !== 'PATCH' && ep.method !== 'PUT') return false;
+          } else if (ep.method !== state.methodFilter) {
+            return false;
+          }
+        }
+        if (!state.search) return true;
+        const hay = `${ep.method} ${ep.path} ${ep.module} ${ep.summary} ${ep.auth.permission || ''}`.toLowerCase();
+        return hay.includes(state.search);
+      });
+
+      const groups = {};
+      filtered.forEach(ep => {
+        if (!groups[ep.module]) groups[ep.module] = [];
+        groups[ep.module].push(ep);
+      });
+
+      const listEl = document.getElementById('routeList');
+      if (filtered.length === 0) {
+        listEl.innerHTML = `<div class="muted" style="padding:12px">Không tìm thấy endpoint phù hợp.</div>`;
+        return;
+      }
+
+      listEl.innerHTML = Object.entries(groups).map(([mod, items]) => `
+        <div class="module-group">
+          <div class="module-title"><span>${esc(mod)}</span><span>${items.length}</span></div>
+          ${items.map(ep => `
+            <div class="route-item ${ep.id === state.selectedId ? 'active' : ''}" data-id="${ep.id}">
+              <div class="route-top">
+                <span class="method m-${ep.method}">${ep.method}</span>
+                <span class="route-path">${esc(ep.path)}</span>
+              </div>
+              <div class="route-sub">${esc(ep.summary)}</div>
+            </div>
+          `).join('')}
+        </div>
+      `).join('');
+
+      listEl.querySelectorAll('.route-item').forEach(el => {
+        el.addEventListener('click', () => {
+          state.selectedId = el.dataset.id;
+          state.lastResponse = null;
+          renderSidebar();
+          renderDetail();
+        });
+      });
+    }
+
+    function buildResolvedUrl(ep) {
+      let resolvedPath = ep.path;
+      (ep.path_params || []).forEach(p => {
+        const input = document.getElementById(`path_param_${p.name}`);
+        const val = input ? input.value.trim() : p.example;
+        resolvedPath = resolvedPath.replace(`{${p.name}}`, encodeURIComponent(val || p.example));
+      });
+
+      const qs = new URLSearchParams();
+      (ep.query_params || []).forEach(q => {
+        const input = document.getElementById(`query_param_${q.name}`);
+        const val = input ? input.value.trim() : q.example;
+        if (val !== '') qs.set(q.name, val);
+      });
+
+      const queryString = qs.toString();
+      return `${baseUrlInput.value.replace(/\/$/, '')}${resolvedPath}${queryString ? '?' + queryString : ''}`;
+    }
+
+    function renderDetail() {
+      const ep = state.spec?.endpoints.find(item => item.id === state.selectedId);
+      if (!ep) return;
+
+      const hasBody = ['POST', 'PUT', 'PATCH'].includes(ep.method);
+      const sampleBodyStr = ep.sample_body !== null ? JSON.stringify(ep.sample_body, null, 2) : '{}';
+
+      document.getElementById('mainPane').innerHTML = `
+        <div class="card">
+          <div class="endpoint-header">
+            <div class="endpoint-url-box">
+              <span class="method m-${ep.method}" style="font-size:12px;padding:4px 10px">${ep.method}</span>
+              <code id="liveUrlPreview">${esc(ep.path)}</code>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button id="copyUrlBtn">Copy URL</button>
+              <button class="primary" id="sendRequestBtn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                Test API ngay
+              </button>
+            </div>
+          </div>
+          <div style="font-size:15px;font-weight:600;margin-bottom:4px">${esc(ep.summary)}</div>
+          <div class="muted">${esc(ep.description)}</div>
+          <div class="pill-row">
+            <span class="pill live">STATUS: LIVE</span>
+            <span class="pill">Client: ${esc(ep.client_target)}</span>
+            <span class="pill ${ep.auth.requires_bearer ? 'warn' : ''}">
+              ${ep.auth.requires_bearer ? 'Authorization: Bearer <token>' : 'Public (Không cần Token)'}
+            </span>
+            ${ep.auth.permission ? `<span class="pill warn">Permission: ${esc(ep.auth.permission)}</span>` : ''}
+            ${ep.auth.requires_branch_id ? `<span class="pill warn">Header: X-Branch-Id</span>` : ''}
+            ${ep.auth.requires_idempotency_key ? `<span class="pill warn">Header: Idempotency-Key (UUID v4 tự sinh)</span>` : ''}
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h3>
+              <span>Tham số &amp; Request Payload</span>
+              ${hasBody ? `<button id="resetBodyBtn" style="padding:3px 8px;font-size:11px">Reset JSON mẫu</button>` : ''}
+            </h3>
+
+            ${(ep.path_params || []).length > 0 ? `
+              <div style="margin-bottom:12px">
+                <div class="muted" style="margin-bottom:6px;font-weight:600">Path Parameters:</div>
+                ${ep.path_params.map(p => `
+                  <div class="param-row">
+                    <label>{${esc(p.name)}}</label>
+                    <input id="path_param_${esc(p.name)}" type="text" value="${esc(p.example)}" placeholder="${esc(p.description)}" />
+                  </div>
+                `).join('')}
+              </div>
+            ` : ''}
+
+            ${(ep.query_params || []).length > 0 ? `
+              <div style="margin-bottom:12px">
+                <div class="muted" style="margin-bottom:6px;font-weight:600">Query Parameters:</div>
+                ${ep.query_params.map(q => `
+                  <div class="param-row">
+                    <label>${esc(q.name)} <span style="color:var(--muted)">(${esc(q.type)})</span></label>
+                    <input id="query_param_${esc(q.name)}" type="text" value="${esc(q.example)}" placeholder="${esc(q.description)}" />
+                  </div>
+                `).join('')}
+              </div>
+            ` : ''}
+
+            ${hasBody ? `
+              <div>
+                <div class="muted" style="margin-bottom:6px;font-weight:600">JSON Body:</div>
+                <textarea id="requestBodyEditor" class="json-editor">${esc(sampleBodyStr)}</textarea>
+              </div>
+            ` : `<div class="muted">Method <code>${ep.method}</code> không dùng JSON Body. Bấm <strong>Test API ngay</strong> để kiểm tra dữ liệu trả về.</div>`}
+          </div>
+
+          <div class="card">
+            <h3>
+              <span>Kết quả &amp; Cấu trúc Data trả về</span>
+              <span id="responseMetaBadge"></span>
+            </h3>
+            <div class="tabs" id="respTabs">
+              <button class="tab-btn ${state.activeTab === 'live' ? 'active' : ''}" data-tab="live">Live Response (Test thật)</button>
+              <button class="tab-btn ${state.activeTab === 'schema' ? 'active' : ''}" data-tab="schema">Cấu trúc Data trả về</button>
+              <button class="tab-btn ${state.activeTab === 'snippet' ? 'active' : ''}" data-tab="snippet">Code mẫu Fetch (Client)</button>
+            </div>
+            <div id="tabContent"></div>
+          </div>
+        </div>
+      `;
+
+      const updatePreview = () => {
+        document.getElementById('liveUrlPreview').textContent = buildResolvedUrl(ep);
+        if (state.activeTab === 'snippet') renderTabContent(ep);
+      };
+      document.querySelectorAll('[id^="path_param_"], [id^="query_param_"]').forEach(inp => {
+        inp.addEventListener('input', updatePreview);
+      });
+      updatePreview();
+
+      document.getElementById('copyUrlBtn').addEventListener('click', () => {
+        navigator.clipboard.writeText(buildResolvedUrl(ep));
+      });
+
+      if (hasBody) {
+        document.getElementById('resetBodyBtn').addEventListener('click', () => {
+          document.getElementById('requestBodyEditor').value = sampleBodyStr;
+        });
+      }
+
+      document.getElementById('respTabs').addEventListener('click', (e) => {
+        const btn = e.target.closest('.tab-btn');
+        if (!btn) return;
+        state.activeTab = btn.dataset.tab;
+        document.querySelectorAll('#respTabs .tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderTabContent(ep);
+      });
+
+      document.getElementById('sendRequestBtn').addEventListener('click', () => executeApiTest(ep));
+      renderTabContent(ep);
+    }
+
+    async function executeApiTest(ep) {
+      const btn = document.getElementById('sendRequestBtn');
+      btn.disabled = true;
+      btn.textContent = 'Đang gọi API...';
+
+      const url = buildResolvedUrl(ep);
+      const headers = {
+        'Accept': 'application/json',
+        'X-Client-Type': clientTypeInput.value || 'web_internal',
+      };
+
+      const token = tokenInput.value.trim();
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      if (ep.auth.requires_branch_id && branchIdInput.value.trim()) {
+        headers['X-Branch-Id'] = branchIdInput.value.trim();
+      }
+      if (ep.auth.requires_idempotency_key) {
+        headers['Idempotency-Key'] = uuidv4();
+      }
+
+      const fetchOpts = { method: ep.method, headers };
+      if (['POST', 'PUT', 'PATCH'].includes(ep.method)) {
+        headers['Content-Type'] = 'application/json';
+        const rawBody = document.getElementById('requestBodyEditor')?.value || '{}';
+        try {
+          JSON.parse(rawBody);
+          fetchOpts.body = rawBody;
+        } catch (err) {
+          alert('JSON Body không hợp lệ: ' + err.message);
+          btn.disabled = false;
+          btn.textContent = 'Test API ngay';
+          return;
+        }
+      }
+
+      const t0 = performance.now();
+      try {
+        const res = await fetch(url, fetchOpts);
+        const ms = Math.round(performance.now() - t0);
+        const text = await res.text();
+        let parsed = text;
+        try { parsed = JSON.stringify(JSON.parse(text), null, 2); } catch (_) {}
+
+        state.lastResponse = { ok: res.ok, status: res.status, ms, body: parsed };
+        if (ep.path === '/api/v1/auth/login' && res.ok) {
+          const obj = JSON.parse(text);
+          if (obj.data?.access_token) {
+            tokenInput.value = obj.data.access_token;
+            localStorage.setItem('vs_docs_token', obj.data.access_token);
+          }
+        }
+      } catch (err) {
+        const ms = Math.round(performance.now() - t0);
+        state.lastResponse = { ok: false, status: 'NETWORK_ERROR', ms, body: err.message };
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polygon points="5 3 19 12 5 21 5 3"/></svg> Test API ngay`;
+      state.activeTab = 'live';
+      document.querySelectorAll('#respTabs .tab-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.tab === 'live');
+      });
+      renderTabContent(ep);
+    }
+
+    function renderTabContent(ep) {
+      const container = document.getElementById('tabContent');
+      const metaBadge = document.getElementById('responseMetaBadge');
+
+      if (state.lastResponse) {
+        metaBadge.innerHTML = `<span class="status-badge ${state.lastResponse.ok ? 'st-ok' : 'st-err'}">HTTP ${state.lastResponse.status} (${state.lastResponse.ms}ms)</span>`;
+      } else {
+        metaBadge.innerHTML = `<span class="muted">Chưa chạy test</span>`;
+      }
+
+      if (state.activeTab === 'live') {
+        if (state.lastResponse) {
+          container.innerHTML = `<pre class="code-box">${esc(state.lastResponse.body)}</pre>`;
+        } else {
+          container.innerHTML = `
+            <div class="muted" style="margin-bottom:8px">Dữ liệu mẫu trả về (bấm <strong>Test API ngay</strong> để gọi server thật):</div>
+            <pre class="code-box">${esc(JSON.stringify(ep.sample_response, null, 2))}</pre>
+          `;
+        }
+        return;
+      }
+
+      if (state.activeTab === 'schema') {
+        container.innerHTML = `
+          <table class="schema-table">
+            <thead>
+              <tr><th>Trường dữ liệu</th><th>Kiểu</th><th>Ý nghĩa</th></tr>
+            </thead>
+            <tbody>
+              ${(ep.response_schema || []).map(row => `
+                <tr>
+                  <td class="field-col">${esc(row.field)}</td>
+                  <td class="type-col">${esc(row.type)}</td>
+                  <td>${esc(row.description)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+          <div class="muted" style="margin:12px 0 6px">Cấu trúc JSON chuẩn của mọi API:</div>
+          <pre class="code-box">${esc(JSON.stringify(ep.sample_response, null, 2))}</pre>
+        `;
+        return;
+      }
+
+      const url = buildResolvedUrl(ep);
+      const hasBody = ['POST', 'PUT', 'PATCH'].includes(ep.method);
+      const bodyText = document.getElementById('requestBodyEditor')?.value || JSON.stringify(ep.sample_body || {}, null, 2);
+      const snippet = `const response = await fetch('${url}', {
+  method: '${ep.method}',
+  headers: {
+    'Accept': 'application/json',
+    'X-Client-Type': '${clientTypeInput.value || 'web_internal'}',${hasBody ? `\n    'Content-Type': 'application/json',` : ''}${ep.auth.requires_bearer ? `\n    'Authorization': \`Bearer \${accessToken}\`,` : ''}${ep.auth.requires_branch_id ? `\n    'X-Branch-Id': '${branchIdInput.value || '3'}',` : ''}${ep.auth.requires_idempotency_key ? `\n    'Idempotency-Key': crypto.randomUUID(),` : ''}
+  },${hasBody ? `\n  body: JSON.stringify(${bodyText}),` : ''}
+});
+const result = await response.json();
+// result = { success: boolean, message: string, data: ..., meta: ... }`;
+
+      container.innerHTML = `<pre class="code-box">${esc(snippet)}</pre>`;
+    }
+
+    loadSpec();
+  </script>
+</body>
+</html>
