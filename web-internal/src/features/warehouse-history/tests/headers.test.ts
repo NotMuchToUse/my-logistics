@@ -1,0 +1,33 @@
+import { afterEach, expect, it, vi } from "vitest";
+import type { InternalAxiosRequestConfig } from "axios";
+vi.hoisted(() => { vi.stubEnv("VITE_USE_MOCK", "false"); });
+import axiosClient from "@/core/api/axiosClient";
+import { useAuthStore } from "@/core/stores/useAuthStore";
+import { useBranchScopeStore } from "@/core/stores/useBranchScopeStore";
+import { INITIAL_FILTERS, type HistoryContext } from "../warehouse-history.model";
+const auth = useAuthStore.getState();
+const scope = useBranchScopeStore.getState();
+const adapter = axiosClient.defaults.adapter;
+afterEach(() => {
+  axiosClient.defaults.adapter = adapter;
+  useAuthStore.setState(auth, true); useBranchScopeStore.setState(scope, true);
+  vi.unstubAllEnvs();
+});
+it("passes real Axios interceptors and uses current auth/branch headers without network", async () => {
+  vi.stubEnv("VITE_USE_MOCK", "false");
+  const { listHistory } = await import("../api/warehouse-history.api");
+  useAuthStore.setState({ token: "isolated-test-token" });
+  useBranchScopeStore.setState({ activeBranchId: 2 });
+  const transport = vi.fn(async (config: InternalAxiosRequestConfig) => ({ data: { success: true, data: [], meta: { pagination: { page: 1, per_page: 20, total: 0, total_pages: 0 } } }, status: 200, statusText: "OK", headers: {}, config }));
+  axiosClient.defaults.adapter = transport;
+  const c: HistoryContext = { authenticated: true, can_read: true, roles: [], branch_id: 2, warehouse_id: null, demo_scope: false, unlock_capability: false };
+  await listHistory(INITIAL_FILTERS, c);
+  expect(transport).toHaveBeenCalledOnce();
+  const request = transport.mock.calls[0][0];
+  expect(request.headers.get("Accept")).toBe("application/json");
+  expect(request.headers.get("X-Client-Type")).toBe("web_internal");
+  expect(request.headers.get("Authorization")).toBe("Bearer isolated-test-token");
+  expect(request.headers.get("X-Branch-Id")).toBe("2");
+  expect(request.headers.has("Idempotency-Key")).toBe(false);
+  expect(request.method).toBe("get");
+});
