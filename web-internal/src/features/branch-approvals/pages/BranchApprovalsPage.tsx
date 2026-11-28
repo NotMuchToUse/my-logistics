@@ -56,7 +56,7 @@ export function BranchApprovalsPage() {
   const [approvals, setApprovals] = useState<BranchApproval[]>([]);
   const [filters, setFilters] =
     useState<BranchApprovalFilters>(INITIAL_FILTERS);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(canAccess);
   const [loadError, setLoadError] = useState("");
   const [createOpen, setCreateOpen] = useState(false);
   const [reviewing, setReviewing] = useState<BranchApproval | null>(null);

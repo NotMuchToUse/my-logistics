@@ -13,6 +13,7 @@ export default defineConfig({
     environment: "jsdom",
     include: [
       "src/features/shipment-detail/__tests__/**/*.test.{ts,tsx}",
+      "src/features/warehouse-audit/**/*.test.{ts,tsx}",
       "src/core/stores/__tests__/**/*.test.{ts,tsx}",
     ],
     setupFiles: ["./src/test/setup.ts"],
